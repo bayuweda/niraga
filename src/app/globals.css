@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #ffffff;
+    color: #111827;
+  }
+}
+
+@layer components {
+  .container-app {
+    @apply max-w-container mx-auto px-4 sm:px-6 lg:px-12;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  .hero-glow {
+    @apply absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] pointer-events-none;
+    background: radial-gradient(ellipse, rgba(34,197,94,0.12) 0%, transparent 65%);
+  }
+
+  .hero-grid {
+    @apply absolute inset-0 pointer-events-none opacity-30;
+    background-image:
+      linear-gradient(#e5e7eb 1px, transparent 1px),
+      linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+  }
+
+  .cta-glow {
+    @apply absolute top-[-100px] right-[-100px] w-96 h-96 pointer-events-none;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.07) 0%, transparent 60%);
+  }
+
+  .tag-badge {
+    @apply inline-flex items-center gap-1.5 bg-green-50 border border-green-200 
+           rounded-full px-3.5 py-1.5 text-xs font-bold text-green-700 
+           uppercase tracking-wide;
+  }
+
+  .animated-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-green-500 animate-blink;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-green-600 text-white 
+           px-6 py-3 rounded-xl border-none cursor-pointer 
+           font-sans text-sm font-bold shadow-green
+           transition-all duration-200
+           hover:bg-green-700 hover:-translate-y-px hover:shadow-green-lg;
+  }
+
+  .btn-primary-sm {
+    @apply btn-primary px-5 py-2.5 text-xs;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 bg-transparent text-gray-700
+           px-6 py-3 rounded-xl cursor-pointer
+           font-sans text-sm font-semibold
+           border border-gray-200
+           transition-all duration-200
+           hover:border-green-500 hover:text-green-700 hover:bg-green-50;
+  }
+
+  .btn-white {
+    @apply inline-flex items-center gap-2 bg-white text-green-700
+           px-7 py-3.5 rounded-xl border-none cursor-pointer
+           font-sans text-sm font-bold
+           transition-all duration-200
+           hover:-translate-y-px hover:shadow-card;
+  }
+
+  .card-base {
+    @apply bg-white border border-gray-200 rounded-3xl p-6
+           transition-all duration-200
+           hover:border-green-200 hover:shadow-green-sm hover:-translate-y-0.5;
+  }
+
+  .card-dark {
+    @apply bg-dark border-transparent rounded-3xl p-6;
+  }
+
+  .section-label {
+    @apply text-xs font-bold text-green-600 uppercase tracking-widest mb-4;
+  }
+
+  .heading-display {
+    @apply font-display font-bold text-display text-gray-900;
+  }
+
+  .heading-display-lg {
+    @apply font-display font-bold text-display-lg text-gray-900;
+  }
+}
