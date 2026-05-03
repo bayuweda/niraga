@@ -15,37 +15,43 @@ export default function StorePage({
 
   const products = [
     {
-      emoji: '🥟',
       name: 'Siomay Frozen Ayam',
       price: 45000,
       unit: 'isi 20 pcs',
-      bgColor: '#fff7ed',
+      imageUrl: 'https://images.unsplash.com/photo-1529692237494-33578a818380?w=400&h=400&fit=crop',
     },
     {
-      emoji: '🍜',
       name: 'Bakso Sapi Premium',
       price: 55000,
       unit: 'isi 25 pcs',
-      bgColor: '#f0fdf4',
+      imageUrl: 'https://images.unsplash.com/photo-1547592180-85f1736701ae?w=400&h=400&fit=crop',
     },
     {
-      emoji: '🦐',
       name: 'Udang Crispy Frozen',
       price: 65000,
       unit: 'isi 500gr',
-      bgColor: '#fefce8',
+      imageUrl: 'https://images.unsplash.com/photo-1565680016090-71c1f1f4e58e?w=400&h=400&fit=crop',
     },
     {
-      emoji: '🥩',
       name: 'Nugget Ayam Homemade',
       price: 42000,
       unit: 'isi 300gr',
-      bgColor: '#fdf2f8',
+      imageUrl: 'https://images.unsplash.com/photo-1594212699903-8e9288b84918?w=400&h=400&fit=crop',
     },
   ]
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Floating Chat Button */}
+      <a
+        href="https://t.me/niraga_demo_bot"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shadow-lg text-2xl transition-colors"
+      >
+        💬
+      </a>
+
       <div className="max-w-store mx-auto pb-14">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-5">
@@ -94,13 +100,35 @@ export default function StorePage({
             {products.map((product) => (
               <ProductCard
                 key={product.name}
-                emoji={product.emoji}
+                imageUrl={product.imageUrl}
                 name={product.name}
                 price={product.price}
                 unit={product.unit}
-                bgColor={product.bgColor}
               />
             ))}
+          </div>
+        </div>
+
+        {/* STORE STATS */}
+        <div className="flex items-center justify-center gap-4 px-4 mb-6 text-xs text-gray-500">
+          <span className="flex items-center gap-1">⚡ Respon cepat</span>
+          <span className="flex items-center gap-1">📦 1.200+ order</span>
+          <span className="flex items-center gap-1">⭐ 4.9/5</span>
+        </div>
+
+        {/* INFO TOKO */}
+        <div className="mx-4 mb-6 bg-white border border-gray-200 rounded-2xl p-5">
+          <div className="text-sm font-bold text-gray-900 mb-3">Info Toko</div>
+          <div className="space-y-2 text-xs text-gray-600">
+            <div className="flex items-center gap-2">
+              <span>🕐</span> <span>Buka Setiap Hari, 08:00 - 20:00</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>📍</span> <span>Bekasi & sekitarnya</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span>💳</span> <span>COD, Transfer, DANA, OVO</span>
+            </div>
           </div>
         </div>
 

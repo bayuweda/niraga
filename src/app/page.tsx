@@ -1,7 +1,26 @@
+'use client'
+
 import Navbar from '@/components/ui/Navbar'
 import Badge from '@/components/ui/Badge'
+import { useAuth } from '@/lib/store'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const { initialized, user, initialize } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    initialize()
+  }, [])
+
+  const handleGetStarted = () => {
+    if (user) {
+      router.push('/dashboard')
+    } else {
+      router.push('/register')
+    }
+  }
   return (
     <main>
       {/* SECTION 1: NAVBAR */}
@@ -36,12 +55,14 @@ export default function Home() {
 
           {/* CTA row */}
           <div className="flex gap-3 justify-center flex-wrap mb-16">
-            <button className="btn-primary">
-              Buat Toko Gratis →
-            </button>
-            <button className="btn-outline">
-              Lihat Demo
-            </button>
+            {initialized && (
+              <button onClick={handleGetStarted} className="btn-primary">
+                {user ? 'Buka Dashboard →' : 'Buat Toko Gratis →'}
+              </button>
+            )}
+            <a href="/toko/dapur-dinda" className="btn-outline">
+              Lihat Demo Toko →
+            </a>
           </div>
 
           {/* Stats row */}
@@ -66,6 +87,54 @@ export default function Home() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: PREVIEW */}
+      <section className="bg-white py-20">
+        <div className="container-app">
+          <div className="text-center mb-10">
+            <div className="tag-badge mx-auto w-fit mb-4">
+              <div className="animated-dot" />
+              Preview Produk
+            </div>
+            <h2 className="font-display font-bold text-gray-900 text-3xl md:text-4xl mb-3">
+              Lihat gimana toko kamu bakal tampil
+            </h2>
+            <p className="text-gray-500 max-w-lg mx-auto">
+              Toko publik yang rapi, mobile-friendly, dan siap dishare ke pelanggan.
+            </p>
+          </div>
+
+          {/* Browser Mockup */}
+          <div className="max-w-4xl mx-auto">
+            {/* Browser Bar */}
+            <div className="bg-gray-100 rounded-t-2xl px-4 py-3 flex items-center gap-2 border border-gray-200 border-b-0">
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-400" />
+                <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                <div className="w-3 h-3 rounded-full bg-green-400" />
+              </div>
+              <div className="flex-1 bg-white rounded-lg px-4 py-1.5 text-xs text-gray-400 text-center ml-4">
+                niraga.id/toko/dapur-dinda
+              </div>
+            </div>
+
+            {/* Embedded Store Page */}
+            <div className="border border-gray-200 border-t-0 rounded-b-2xl overflow-hidden shadow-card-lg">
+              <iframe
+                src="/toko/dapur-dinda"
+                className="w-full h-[600px]"
+                title="Toko Demo"
+              />
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <a href="/toko/dapur-dinda" className="btn-primary">
+              Coba Demo Sekarang →
+            </a>
           </div>
         </div>
       </section>
