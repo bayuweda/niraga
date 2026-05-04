@@ -1,15 +1,23 @@
+'use client'
+
+import { useState } from 'react'
 import ProductCard from '@/components/ui/ProductCard'
+import { formatRupiah } from '@/lib/utils'
 
 export default function StorePage({
   params,
 }: {
   params: { username: string }
 }) {
+  const [cart, setCart] = useState<{ name: string; price: number; qty: number }[]>([])
+  const [showCart, setShowCart] = useState(false)
+
   const store = {
     name: 'Dapur Dinda',
     description:
       'Frozen food homemade berkualitas, dibuat fresh setiap hari. Bebas pengawet, rasa rumahan.',
     logo: '🥟',
+    whatsapp: '6281234567890', // Ganti dengan nomor asli
     tags: ['✓ Terpercaya', '🚚 COD & Ongkir', '⚡ Respon Cepat', '🕐 Buka Setiap Hari'],
   }
 
@@ -40,17 +48,60 @@ export default function StorePage({
     },
   ]
 
+  const addToCart = (product: typeof products[0]) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.name === product.name)
+      if (existing) {
+        return prev.map((item) =>
+          item.name === product.name
+            ? { ...item, qty: item.qty + 1 }
+            : item
+        )
+      }
+      return [...prev, { name: product.name, price: product.price, qty: 1 }]
+    })
+  }
+
+  const removeFromCart = (productName: string) => {
+    setCart((prev) => prev.filter((item) => item.name !== productName))
+  }
+
+  const getTotal = () => {
+    return cart.reduce((sum, item) => sum + item.price * item.qty, 0)
+  }
+
+  const generateWhatsAppMessage = () => {
+    if (cart.length === 0) return ''
+
+    let message = 'Halo kak, saya mau pesan:\n\n'
+    cart.forEach((item) => {
+      message += `• ${item.name} x${item.qty}\n`
+    })
+    message += `\nTotal: Rp ${getTotal().toLocaleString('id-ID')}\n`
+    message += '\nBoleh share alamat kirimnya?'
+
+    return encodeURIComponent(message)
+  }
+
+  const openWhatsApp = () => {
+    const message = generateWhatsAppMessage()
+    window.open(`https://wa.me/${store.whatsapp}?text=${message}`, '_blank')
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Floating Chat Button */}
-      <a
-        href="https://t.me/niraga_demo_bot"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shadow-lg text-2xl transition-colors"
-      >
-        💬
-      </a>
+      {/* Floating Cart Button */}
+      {cart.length > 0 && (
+        <button
+          onClick={() => setShowCart(!showCart)}
+          className="fixed bottom-6 right-6 z-50 bg-green-600 hover:bg-green-700 text-white rounded-full w-14 h-14 shadow-lg flex items-center justify-center text-xl transition-colors"
+        >
+          🛒
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+            {cart.reduce((sum, item) => sum + item.qty, 0)}
+          </span>
+        </button>
+      )}
 
       <div className="max-w-store mx-auto pb-14">
         {/* STORE HEADER */}
@@ -90,25 +141,6 @@ export default function StorePage({
           </div>
         </div>
 
-        {/* PRODUCTS SECTION */}
-        <div className="px-4 mb-6">
-          <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">
-            Produk Tersedia
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {products.map((product) => (
-              <ProductCard
-                key={product.name}
-                imageUrl={product.imageUrl}
-                name={product.name}
-                price={product.price}
-                unit={product.unit}
-              />
-            ))}
-          </div>
-        </div>
-
         {/* STORE STATS */}
         <div className="flex items-center justify-center gap-4 px-4 mb-6 text-xs text-gray-500">
           <span className="flex items-center gap-1">⚡ Respon cepat</span>
@@ -132,9 +164,105 @@ export default function StorePage({
           </div>
         </div>
 
+        {/* PRODUCTS SECTION */}
+        <div className="px-4 mb-6">
+          <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-1">
+            Produk Tersedia
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {products.map((product) => (
+              <div key={product.name} className="relative">
+                <ProductCard
+                  imageUrl={product.imageUrl}
+                  name={product.name}
+                  price={product.price}
+                  unit={product.unit}
+                />
+                {/* Quick Add Button */}
+                <button
+                  onClick={() => addToCart(product)}
+                  className="absolute bottom-20 left-1/2 -translate-x-1/2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg opacity-0 hover:opacity-100 transition-opacity"
+                >
+                  + Tambah
+                </button>
+                {/* In Cart Indicator */}
+                {cart.find((item) => item.name === product.name) && (
+                  <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                    {cart.find((item) => item.name === product.name)?.qty}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CART MODAL */}
+        {showCart && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-end justify-center p-4">
+            <div className="bg-white rounded-t-3xl w-full max-w-store p-6 max-h-[80vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <div className="font-bold text-lg">Keranjang Kamu</div>
+                <button
+                  onClick={() => setShowCart(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {cart.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  Keranjang kosong
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-3 mb-6">
+                    {cart.map((item) => (
+                      <div key={item.name} className="flex items-center justify-between bg-gray-50 p-3 rounded-xl">
+                        <div>
+                          <div className="font-semibold text-sm">{item.name}</div>
+                          <div className="text-xs text-gray-500">
+                            {formatRupiah(item.price)} x {item.qty}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-sm">
+                            {formatRupiah(item.price * item.qty)}
+                          </div>
+                          <button
+                            onClick={() => removeFromCart(item.name)}
+                            className="text-xs text-red-500"
+                          >
+                            Hapus
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-4 mb-4">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Total</span>
+                      <span className="text-green-700">{formatRupiah(getTotal())}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={openWhatsApp}
+                    className="btn-primary w-full justify-center"
+                  >
+                    Pesan lewat WhatsApp 💬
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* BOT TELEGRAM BANNER */}
         <div className="mx-4 bg-dark rounded-[18px] p-5 flex items-center gap-3.5">
-          <div className="w-11 h-11 bg-green-600/15 rounded-[13px] flex items-center justify-center text-xl flex-shrink-0">
+          <div className="w-11 h-11 bg-green-500/15 rounded-[13px] flex items-center justify-center text-xl flex-shrink-0">
             🤖
           </div>
           <div className="flex-1 min-w-0">
@@ -145,7 +273,7 @@ export default function StorePage({
               Cek stok, tanya harga, atau order langsung. Aktif 24/7!
             </div>
           </div>
-          <button className="flex-shrink-0 bg-green-500 hover:bg-green-600 text-white text-[11px] font-bold px-4 py-2.5 rounded-[10px] transition-colors">
+          <button className="flex-shrink-0 bg-green-600 hover:bg-green-700 text-white text-[11px] font-bold px-4 py-2.5 rounded-[10px] transition-colors">
             Chat →
           </button>
         </div>
@@ -201,21 +329,6 @@ export function Loading() {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Bot Banner Skeleton */}
-        <div className="mx-4 bg-dark rounded-[18px] p-5 flex items-center gap-3.5">
-          <div className="w-11 h-11 bg-green-500/15 rounded-[13px] animate-pulse" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-white/20 rounded w-40 animate-pulse" />
-            <div className="h-3 bg-white/20 rounded w-full animate-pulse" />
-          </div>
-          <div className="h-8 w-16 bg-green-600/30 rounded-[10px] animate-pulse" />
-        </div>
-
-        {/* Footer Skeleton */}
-        <div className="text-center px-4 pt-6 pb-2">
-          <div className="h-3 bg-gray-200 rounded w-48 mx-auto animate-pulse" />
         </div>
       </div>
     </div>
