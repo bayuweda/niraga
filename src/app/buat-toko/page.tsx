@@ -2,36 +2,51 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useTempStore } from '@/lib/temp-store'
-import ProductCard from '@/components/ui/ProductCard'
 import { formatRupiah } from '@/lib/utils'
+
+interface Product {
+  id: number
+  name: string
+  price: string
+  unit: string
+  emoji: string
+  imageBase64: string
+  imageUrl: string
+}
 
 export default function BuatTokoPage() {
   const router = useRouter()
-  const {
-    storeName,
-    whatsapp,
-    products,
-    addProduct,
-    removeProduct,
-    updateStoreName,
-    updateWhatsapp,
-  } = useTempStore()
+  const [step, setStep] = useState(0)
+  const [store, setStore] = useState({ name: '', wa: '', desc: '' })
+  const [products, setProducts] = useState<Product[]>([
+    { id: 1, emoji: '🥟', name: 'Siomay Frozen Ayam', price: '45000', unit: 'isi 20 pcs', imageBase64: '', imageUrl: '' },
+  ])
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [newProd, setNewProd] = useState({ emoji: '', name: '', price: '', unit: '', imageBase64: '' })
+  const [copied, setCopied] = useState(false)
 
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    price: '',
-    unit: '',
-    imageUrl: '',
-    imageBase64: '',
-  })
+  const steps = ['Info Toko', 'Produk', 'Preview & Link']
   const fileInputRef = { current: null as any }
+
+  const addProduct = () => {
+    if (!newProd.name || !newProd.price) return
+    setProducts(p => [...p, { id: Date.now(), emoji: newProd.emoji || '📦', name: newProd.name, price: newProd.price, unit: newProd.unit, imageBase64: newProd.imageBase64, imageUrl: '' }])
+    setNewProd({ emoji: '', name: '', price: '', unit: '', imageBase64: '' })
+    setShowAddForm(false)
+  }
+
+  const removeProduct = (id: number) => {
+    setProducts(p => p.filter(x => x.id !== id))
+  }
+
+  const handleCopy = () => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    // Validate: max 2MB, image only
     if (file.size > 2 * 1024 * 1024) {
       alert('Ukuran maksimal 2MB')
       return
@@ -40,347 +55,238 @@ export default function BuatTokoPage() {
       alert('Hanya file gambar yang diperbolehkan')
       return
     }
-
     const reader = new FileReader()
     reader.onloadend = () => {
-      setNewProduct((prev) => ({ ...prev, imageBase64: reader.result as string }))
+      setNewProd(prev => ({ ...prev, imageBase64: reader.result as string }))
     }
     reader.readAsDataURL(file)
   }
 
-  const removeImage = () => {
-    setNewProduct((prev) => ({ ...prev, imageBase64: '', imageUrl: '' }))
-    if (fileInputRef.current) fileInputRef.current.value = ''
+  const handleCreateStore = () => {
+    alert(`Toko "${store.name}" berhasil dibuat!\n\nLink: niraga.id/${store.name.toLowerCase().replace(/\s+/g, '-')}`)
+    router.push('/dashboard')
   }
-
-  const [showPreview, setShowPreview] = useState(false)
-
-  const handleAddProduct = () => {
-    if (!newProduct.name || !newProduct.price) return
-
-    addProduct({
-      ...newProduct,
-      price: parseInt(newProduct.price),
-      imageBase64: newProduct.imageBase64,
-    })
-
-    setNewProduct({ name: '', price: '', unit: '', imageUrl: '', imageBase64: '' })
-  }
-
-  const canPreview = storeName && products.length > 0
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
-      {/* NAVBAR SIMPLE */}
-      <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-gray-200">
-        <div className="container-app flex items-center justify-between h-full">
-          <div className="font-display italic font-bold text-green-700 text-xl">
-            Nira<span className="text-green-600">ga</span>
-          </div>
-          {canPreview && (
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className="btn-outline text-sm py-2 px-5"
-            >
-              {showPreview ? 'Sembunyikan Preview' : 'Lihat Preview →'}
-            </button>
-          )}
+    <div className="min-h-screen bg-cream pt-16">
+      {/* HEADER */}
+      <div className="text-center pt-10 md:pt-16 pb-0 px-4">
+        <div className="tag-pill mb-3.5 w-fit mx-auto">
+          <div className="live-dot" />
+          Gratis · Tanpa login dulu
         </div>
-      </nav>
+        <h1 className="font-bold text-gray-900 text-[28px] md:text-[46px] tracking-[-1.5px] mb-2.5" style={{ fontFamily: 'Instrument Serif, serif' }}>
+          Buat Toko Kamu
+        </h1>
+        <p className="text-base text-gray-600">Isi info di bawah — toko siap dalam 2 menit.</p>
+      </div>
 
-      <div className="container-app py-10">
-        <div className="max-w-4xl mx-auto">
-          {/* HEADER */}
-          <div className="text-center mb-10">
-            <h1 className="font-display font-bold text-gray-900 text-3xl md:text-4xl mb-3">
-              Buat Toko dalam 1 Menit
-            </h1>
-            <p className="text-gray-500">
-              Input produk, dapat link, share ke pelanggan. Tanpa daftar dulu!
-            </p>
+      {/* STEPPER */}
+      <div className="flex items-center justify-center gap-0 py-8 md:py-10 px-4">
+        {steps.map((s, i) => (
+          <div key={i} className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200 border-2 ${i < step ? 'bg-green-600 border-green-600 text-white' : i === step ? 'bg-white border-green-600 text-green-600 shadow-[0_0_0_4px_rgba(22,163,74,.12)]' : 'bg-white border-gray-200 text-gray-500'}`}>
+                {i < step ? '✓' : i + 1}
+              </div>
+              <div className={`text-[11px] font-semibold mt-1.5 whitespace-nowrap ${i < step ? 'text-green-600' : i === step ? 'text-green-600' : 'text-gray-500'}`}>{s}</div>
+            </div>
+            {i < steps.length - 1 && (
+              <div className={`h-0.5 w-[40px] md:w-20 bg-gray-200 mx-1 mb-5 transition-all duration-200 ${i < step ? 'bg-green-600' : ''}`} />
+            )}
           </div>
+        ))}
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-            {/* LEFT: FORM */}
-            <div className="space-y-6">
-              {/* STORE INFO */}
-              <div className="bg-white border border-gray-200 rounded-3xl p-6">
-                <div className="text-sm font-bold text-gray-900 mb-4">Info Toko</div>
+      {/* STEP CONTENT */}
+      <div className="max-w-[560px] mx-auto px-4 pb-[60px]">
+        {/* STEP 0: INFO TOKO */}
+        {step === 0 && (
+          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+            <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight">Info Toko kamu 🏪</div>
+            <div className="text-sm text-gray-500 mb-7 leading-relaxed">Info ini yang pelanggan lihat di halaman tokomu.</div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Nama Toko
-                    </label>
-                    <input
-                      type="text"
-                      value={storeName}
-                      onChange={(e) => updateStoreName(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                      placeholder="Toko Saya"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Nomor WhatsApp (untuk order)
-                    </label>
-                    <input
-                      type="text"
-                      value={whatsapp}
-                      onChange={(e) => updateWhatsapp(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                      placeholder="6281234567890"
-                    />
-                  </div>
-                </div>
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Nama Toko *</label>
+                <input
+                  type="text"
+                  value={store.name}
+                  onChange={e => setStore({ ...store, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
+                  placeholder="cth: Dapur Dinda, Toko Baju Cantik..."
+                />
               </div>
 
-              {/* ADD PRODUCT */}
-              <div className="bg-white border border-gray-200 rounded-3xl p-6">
-                <div className="text-sm font-bold text-gray-900 mb-4">Tambah Produk</div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Nama Produk
-                    </label>
-                    <input
-                      type="text"
-                      value={newProduct.name}
-                      onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                      placeholder="Siomay Frozen"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                        Harga (Rp)
-                      </label>
-                      <input
-                        type="number"
-                        value={newProduct.price}
-                        onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                        placeholder="45000"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                        Unit
-                      </label>
-                      <input
-                        type="text"
-                        value={newProduct.unit}
-                        onChange={(e) => setNewProduct({ ...newProduct, unit: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                        placeholder="isi 20 pcs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Foto Produk
-                    </label>
-                    
-                    {/* Hidden File Input */}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-
-                    {/* Upload Button / Preview */}
-                    {newProduct.imageBase64 ? (
-                      <div className="relative">
-                        <img
-                          src={newProduct.imageBase64}
-                          alt="Preview"
-                          className="w-full h-32 object-cover rounded-xl"
-                        />
-                        <button
-                          onClick={removeImage}
-                          className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-full h-32 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-green-500 hover:text-green-600 transition-colors"
-                      >
-                        <span className="text-2xl">📷</span>
-                        <span className="text-xs">Klik untuk upload gambar</span>
-                        <span className="text-[10px]">Maks 2MB</span>
-                      </button>
-                    )}
-
-                    {/* Optional URL fallback */}
-                    <div className="mt-2 flex items-center gap-2">
-                      <div className="flex-1 h-px bg-gray-200" />
-                      <span className="text-xs text-gray-400">atau</span>
-                      <div className="flex-1 h-px bg-gray-200" />
-                    </div>
-                    <input
-                      type="text"
-                      value={newProduct.imageUrl}
-                      onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value, imageBase64: '' })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                      placeholder="URL gambar (opsional)"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleAddProduct}
-                    disabled={!newProduct.name || !newProduct.price}
-                    className="btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    + Tambah Produk
-                  </button>
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Nomor WhatsApp *</label>
+                <input
+                  type="text"
+                  value={store.wa}
+                  onChange={e => setStore({ ...store, wa: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
+                  placeholder="cth: 08123456789"
+                />
+                <div className="text-[11px] text-gray-500 mt-1.5">Order dari pelanggan akan masuk ke nomor ini.</div>
               </div>
 
-              {/* PRODUCT LIST */}
-              {products.length > 0 && (
-                <div className="bg-white border border-gray-200 rounded-3xl p-6">
-                  <div className="text-sm font-bold text-gray-900 mb-4">
-                    Produk ({products.length})
-                  </div>
-
-                  <div className="space-y-3">
-                    {products.map((product) => (
-                      <div
-                        key={product.id}
-                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
-                      >
-                        {(product.imageBase64 || product.imageUrl) ? (
-                          <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
-                            <img
-                              src={product.imageBase64 || product.imageUrl}
-                              alt={product.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center text-xl flex-shrink-0">
-                            📦
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-bold text-gray-900">
-                            {product.name}
-                          </div>
-                          <div className="text-xs text-green-700 font-semibold">
-                            {formatRupiah(product.price)} / {product.unit}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => removeProduct(product.id)}
-                          className="text-red-500 hover:text-red-700 text-xs"
-                        >
-                          Hapus
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Deskripsi Singkat <span className="text-gray-500 font-normal">(opsional)</span></label>
+                <textarea
+                  value={store.desc}
+                  onChange={e => setStore({ ...store, desc: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all resize-none min-h-20"
+                  placeholder="cth: Frozen food homemade, bebas pengawet, dikirim setiap hari..."
+                />
+              </div>
             </div>
 
-            {/* RIGHT: LIVE PREVIEW */}
-            <div className="lg:sticky lg:top-20 self-start">
-              <div className="bg-white border border-gray-200 rounded-3xl p-6">
-                <div className="text-sm font-bold text-gray-900 mb-4 flex items-center justify-between">
-                  <span>Preview Toko</span>
-                  {products.length >= 5 && (
-                    <span className="text-xs text-amber-600 font-medium">
-                      Limit free: {products.length}/5
-                    </span>
-                  )}
-                </div>
+            <button
+              onClick={() => setStep(1)}
+              disabled={!store.name || !store.wa}
+              className="w-full mt-6 bg-green-600 hover:bg-green-700 disabled:bg-gray-200 disabled:text-gray-500 text-white font-bold py-3.5 rounded-2xl transition-all duration-200 shadow-green disabled:shadow-none"
+            >
+              Lanjut — Tambah Produk →
+            </button>
+          </div>
+        )}
 
-                {!showPreview ? (
-                  <div className="text-center py-8 text-gray-400 text-sm">
-                    {canPreview
-                      ? 'Klik "Lihat Preview" untuk melihat toko'
-                      : 'Input nama toko & minimal 1 produk'}
+        {/* STEP 1: PRODUK */}
+        {step === 1 && (
+          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+            <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight">Produk kamu 📦</div>
+            <div className="text-sm text-gray-500 mb-7 leading-relaxed">Tambah produk yang mau kamu jual. Bisa diedit kapanpun.</div>
+
+            {/* Product List */}
+            <div className="space-y-2.5 mb-4">
+              {products.map(p => (
+                <div key={p.id} className="flex items-center gap-3 bg-warm border border-gray-200 rounded-xl p-3.5">
+                  <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center text-[22px] flex-shrink-0">{p.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-gray-900">{p.name}</div>
+                    <div className="text-xs font-bold text-green-600">{formatRupiah(parseInt(p.price))}</div>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="font-display font-bold text-gray-900 mb-1">
-                        {storeName}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {products.length} produk tersedia
-                      </div>
-                    </div>
+                  <button onClick={() => removeProduct(p.id)} className="w-7 h-7 bg-red-100 text-red-600 rounded-lg flex items-center justify-center text-sm flex-shrink-0 hover:bg-red-200 transition-colors">✕</button>
+                </div>
+              ))}
+            </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      {products.slice(0, 4).map((product) => (
-                        <div key={product.id} className="border border-gray-200 rounded-xl overflow-hidden">
-                          {(product.imageBase64 || product.imageUrl) ? (
-                            <div className="w-full aspect-square relative">
-                              <img
-                                src={product.imageBase64 || product.imageUrl!}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-full aspect-square bg-green-50 flex items-center justify-center text-3xl">
-                              📦
-                            </div>
-                          )}
-                          <div className="p-2">
-                            <div className="text-xs font-bold text-gray-900 truncate">
-                              {product.name}
-                            </div>
-                            <div className="text-xs text-green-700 font-semibold">
-                              {formatRupiah(product.price)}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      disabled={!whatsapp}
-                      className="btn-primary w-full justify-center text-xs py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Pesan Lewat WhatsApp
-                    </button>
+            {/* Add Form */}
+            {!showAddForm ? (
+              <button onClick={() => setShowAddForm(true)} className="w-full py-3 border-2 border-dashed border-green-200 bg-green-50 text-green-600 font-bold text-sm rounded-xl flex items-center justify-center gap-1.5 hover:bg-green-100 hover:border-green-500 transition-all">
+                + Tambah Produk
+              </button>
+            ) : (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-3">
+                <div className="grid grid-cols-2 gap-2.5 mb-2.5">
+                  <input
+                    type="text"
+                    value={newProd.emoji}
+                    onChange={e => setNewProd({ ...newProd, emoji: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-green-200 rounded-lg text-sm bg-white focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                    placeholder="Emoji (cth: 🥟)"
+                  />
+                  <input
+                    type="text"
+                    value={newProd.price}
+                    onChange={e => setNewProd({ ...newProd, price: e.target.value })}
+                    className="w-full px-3 py-2.5 border border-green-200 rounded-lg text-sm bg-white focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                    placeholder="Harga (cth: 45000)"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={newProd.name}
+                  onChange={e => setNewProd({ ...newProd, name: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-green-200 rounded-lg text-sm bg-white focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 mb-2.5"
+                  placeholder="Nama produk (cth: Siomay Frozen Ayam)"
+                />
+                <input
+                  type="text"
+                  value={newProd.unit}
+                  onChange={e => setNewProd({ ...newProd, unit: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-green-200 rounded-lg text-sm bg-white focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 mb-2.5"
+                  placeholder="Unit (cth: isi 20 pcs)"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                {newProd.imageBase64 && (
+                  <div className="relative mb-2.5">
+                    <img src={newProd.imageBase64} alt="Preview" className="w-full h-20 object-cover rounded-lg" />
                   </div>
                 )}
-              </div>
-
-              {/* CTA */}
-              {canPreview && (
-                <div className="mt-4 text-center">
-                  <button
-                    onClick={() => {
-                      // TODO: Generate unique link & prompt login
-                      alert('Link toko: niraga.id/toko/' + storeName.toLowerCase().replace(/\s+/g, '-'))
-                    }}
-                    className="btn-primary w-full justify-center"
-                  >
-                    Buat Link Toko →
-                  </button>
-                  <p className="text-xs text-gray-400 mt-2">
-                    Login diperlukan untuk menyimpan toko
-                  </p>
+                <button onClick={() => fileInputRef.current?.click()} className="w-full py-2 border border-green-200 rounded-lg text-xs text-gray-500 bg-white mb-2.5 hover:border-green-500">
+                  📷 Upload foto (opsional)
+                </button>
+                <div className="flex gap-2">
+                  <button onClick={() => setShowAddForm(false)} className="flex-1 py-2.5 bg-white text-gray-500 border border-gray-200 rounded-lg font-semibold text-sm hover:bg-gray-50">Batal</button>
+                  <button onClick={addProduct} className="flex-1 py-2.5 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700">+ Tambah</button>
                 </div>
-              )}
+              </div>
+            )}
+
+            <div className="flex gap-2.5 mt-6">
+              <button onClick={() => setStep(0)} className="flex-1 py-3.5 bg-white text-gray-900 border border-gray-200 rounded-2xl font-bold text-sm hover:border-gray-400 transition-all">← Kembali</button>
+              <button onClick={() => setStep(2)} disabled={products.length === 0} className="flex-1 py-3.5 bg-green-600 text-white rounded-2xl font-bold text-sm shadow-green disabled:bg-gray-200 disabled:text-gray-500 disabled:shadow-none hover:bg-green-700 transition-all">Lihat Preview →</button>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* STEP 2: PREVIEW */}
+        {step === 2 && (
+          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+            <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight">Toko kamu siap! 🎉</div>
+            <div className="text-sm text-gray-500 mb-6 leading-relaxed">Ini tampilan toko kamu. Salin link di bawah dan share ke pelanggan.</div>
+
+            {/* Preview Phone */}
+            <div className="bg-white rounded-[28px] p-4 shadow-card-lg border border-gray-200 mb-5">
+              <div className="text-center pb-4 border-b border-gray-200 mb-3.5">
+                <div className="w-14 h-14 bg-gradient-to-br from-green-600 to-green-400 rounded-[18px] flex items-center justify-center text-2xl mx-auto mb-2.5 shadow-green">🏪</div>
+                <div className="font-bold text-base text-gray-900 mb-0.5">{store.name || 'Nama Toko'}</div>
+                <div className="text-[11px] text-gray-500">{store.desc || 'Toko online kamu'}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {products.slice(0, 4).map(p => (
+                  <div key={p.id} className="bg-warm border border-gray-200 rounded-xl p-2.5">
+                    <div className="text-xl mb-1">{p.emoji}</div>
+                    <div className="text-[10px] font-bold text-gray-900 leading-tight mb-0.5">{p.name}</div>
+                    <div className="text-[11px] font-bold text-green-600">{formatRupiah(parseInt(p.price))}</div>
+                  </div>
+                ))}
+              </div>
+              <button className="w-full py-2.5 bg-green-600 text-white rounded-xl font-bold text-[11px] shadow-green">🛒 Pilih & Pesan via WA</button>
+            </div>
+
+            {/* Link Box */}
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-2.5 mb-3">
+              <div className="flex-1 text-sm font-bold text-green-600 break-all">
+                niraga.id/{store.name.toLowerCase().replace(/\s+/g, '-') || 'toko-kamu'}
+              </div>
+              <button onClick={handleCopy} className="flex-shrink-0 py-2 px-4 bg-green-600 text-white rounded-lg font-bold text-xs hover:bg-green-700 transition-colors">
+                {copied ? '✓ Disalin!' : 'Salin'}
+              </button>
+            </div>
+
+            {/* Save Banner */}
+            <div className="bg-white border border-amber-400 rounded-xl p-3.5 flex items-center gap-3">
+              <div className="text-xl flex-shrink-0">💾</div>
+              <div className="flex-1">
+                <div className="text-sm font-bold text-gray-900 mb-0.5">Simpan toko kamu</div>
+                <div className="text-[11px] text-gray-500">Buat akun gratis biar toko bisa diedit kapanpun.</div>
+              </div>
+              <button onClick={handleCreateStore} className="flex-shrink-0 py-2 px-4 bg-amber-500 text-white rounded-lg font-bold text-xs hover:bg-amber-600 transition-colors">Simpan Gratis</button>
+            </div>
+
+            <div className="flex gap-2.5 mt-4">
+              <button onClick={() => setStep(1)} className="flex-1 py-3.5 bg-white text-gray-900 border border-gray-200 rounded-2xl font-bold text-sm hover:border-gray-400 transition-all">← Edit Produk</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,5 +1,4 @@
 import { formatRupiah } from '@/lib/utils'
-import Image from 'next/image'
 
 interface ProductCardProps {
   emoji?: string
@@ -8,6 +7,10 @@ interface ProductCardProps {
   price: number
   unit: string
   bgColor?: string
+  selected?: boolean
+  quantity?: number
+  onSelect?: () => void
+  onQtyChange?: (qty: number) => void
 }
 
 export default function ProductCard({
@@ -16,21 +19,25 @@ export default function ProductCard({
   name,
   price,
   unit,
-  bgColor,
+  bgColor = '#f0fdf4',
+  selected = false,
+  quantity = 0,
+  onSelect,
+  onQtyChange,
 }: ProductCardProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 hover:border-green-200 hover:shadow-green-sm hover:-translate-y-0.5">
+    <div
+      onClick={onSelect}
+      className={`bg-white border-2 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 relative ${selected ? 'border-green-500 shadow-[0_0_0_3px_rgba(22,163,74,.12)]' : 'border-gray-200 hover:border-green-200 hover:shadow-[0_6px_20px_rgba(22,163,74,.1)] hover:-translate-y-0.5'}`}
+    >
+      {/* Product Image */}
       <div className="w-full aspect-square relative overflow-hidden">
         {imageUrl ? (
-          <div className="relative w-full h-full">
-            <Image
-              src={imageUrl}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 50vw, 240px"
-            />
-          </div>
+          <img
+            src={imageUrl}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div
             className="w-full h-full flex items-center justify-center text-5xl"
@@ -41,17 +48,37 @@ export default function ProductCard({
         )}
       </div>
 
-      <div className="p-3">
-        <div className="text-sm font-bold text-gray-900 mb-0.5">{name}</div>
-        <div className="text-sm font-bold text-green-700">
-          {formatRupiah(price)}
-          <span className="text-xs text-gray-400 font-normal"> / {unit}</span>
+      {/* Check Mark */}
+      <div className={`absolute top-2 right-2 w-[22px] h-[22px] rounded-full bg-green-600 text-white text-[11px] flex items-center justify-center transition-all duration-200 ${selected ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.6]'}`}>
+        ✓
+      </div>
+
+      {/* Product Body */}
+      <div className="p-2.5">
+        <div className="text-xs font-bold text-gray-900 mb-0.5 leading-tight line-clamp-2">{name}</div>
+        <div className="text-sm font-bold text-green-600">
+          {formatRupiah(price)} <span className="text-[10px] text-gray-500 font-normal">/ {unit}</span>
         </div>
       </div>
 
-      <button className="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2.5 transition-colors duration-150">
-        Chat Penjual 💬
-      </button>
+      {/* Quantity Controls */}
+      {selected && quantity > 0 && (
+        <div className="flex items-center justify-center gap-2 p-2 bg-green-50 border-t border-green-200" onClick={e => e.stopPropagation()}>
+          <button
+            onClick={() => onQtyChange?.(quantity - 1)}
+            className="w-6 h-6 rounded-full bg-white border border-green-200 text-green-600 text-sm font-bold flex items-center justify-center hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors font-sans"
+          >
+            −
+          </button>
+          <div className="text-sm font-bold text-gray-900 min-w-4 text-center">{quantity}</div>
+          <button
+            onClick={() => onQtyChange?.(quantity + 1)}
+            className="w-6 h-6 rounded-full bg-white border border-green-200 text-green-600 text-sm font-bold flex items-center justify-center hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors font-sans"
+          >
+            +
+          </button>
+        </div>
+      )}
     </div>
   )
 }
