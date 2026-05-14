@@ -40,8 +40,8 @@ const config: Config = {
         border: '#e2ede2',
       },
       fontFamily: {
-        display: ['Instrument Serif', 'serif'],
-        sans: ['Poppins', 'sans-serif'],
+        display: ['var(--font-instrument)', 'serif'],
+        sans: ['var(--font-poppins)', 'sans-serif'],
       },
       boxShadow: {
         'green': '0 8px 32px rgba(22,163,74,.22)',
