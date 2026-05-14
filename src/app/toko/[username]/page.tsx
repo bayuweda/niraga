@@ -15,15 +15,19 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   useEffect(() => {
     async function load() {
-      const { data: storeData } = await getStoreBySlug(slug)
-      if (!storeData) {
-        setLoading(false)
-        return
-      }
-      setStore(storeData)
+      try {
+        const { data: storeData } = await getStoreBySlug(slug)
+        if (!storeData) {
+          setLoading(false)
+          return
+        }
+        setStore(storeData)
 
-      const { data: productsData } = await getProductsByStoreId(storeData.id)
-      if (productsData) setProducts(productsData)
+        const { data: productsData } = await getProductsByStoreId(storeData.id)
+        if (productsData) setProducts(productsData)
+      } catch (e) {
+        console.error('Failed to load store:', e)
+      }
       setLoading(false)
     }
     load()

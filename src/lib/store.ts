@@ -31,6 +31,11 @@ export const useAuth = create<AuthState>((set) => ({
       }
 
       const supabase = getSupabaseClient()
+      if (!supabase) {
+        set({ initialized: true })
+        return
+      }
+
       const { data: { session } } = await supabase.auth.getSession()
 
       if (session?.user) {
@@ -66,6 +71,10 @@ export const useAuth = create<AuthState>((set) => ({
   signIn: async (email, password) => {
     set({ loading: true })
     const supabase = getSupabaseClient()
+    if (!supabase) {
+      set({ loading: false })
+      return { error: new Error('Supabase belum dikonfigurasi. Cek .env.local') }
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -77,6 +86,10 @@ export const useAuth = create<AuthState>((set) => ({
   signUp: async (email, password) => {
     set({ loading: true })
     const supabase = getSupabaseClient()
+    if (!supabase) {
+      set({ loading: false })
+      return { error: new Error('Supabase belum dikonfigurasi. Cek .env.local') }
+    }
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -87,7 +100,9 @@ export const useAuth = create<AuthState>((set) => ({
 
   signOut: async () => {
     const supabase = getSupabaseClient()
-    await supabase.auth.signOut()
+    if (supabase) {
+      await supabase.auth.signOut()
+    }
     set({ user: null })
   },
 }))
