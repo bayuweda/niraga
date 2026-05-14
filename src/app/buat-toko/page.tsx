@@ -21,7 +21,7 @@ interface Product {
 
 export default function BuatTokoPage() {
   const router = useRouter()
-  const { user, initialized } = useAuth()
+  const { user, initialized, initialize } = useAuth()
   const [step, setStep] = useState(0)
   const [store, setStore] = useState({ name: '', username: '', wa: '', desc: '', shippingInfo: '' })
   const [products, setProducts] = useState<Product[]>([
@@ -34,8 +34,9 @@ export default function BuatTokoPage() {
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short'>('idle')
   const manualUsername = useRef(false)
 
-  // Restore wizard data after login/register redirect
+  // Initialize auth + restore wizard data after login/register redirect
   useEffect(() => {
+    initialize()
     if (typeof window !== 'undefined') {
       try {
         const savedStore = sessionStorage.getItem('niraga_wizard_store')
