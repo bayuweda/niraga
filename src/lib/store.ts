@@ -1,7 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
-import { supabase } from './supabase'
+import { getSupabaseClient } from './supabase'
 
 interface User {
   id: string
@@ -25,6 +25,12 @@ export const useAuth = create<AuthState>((set) => ({
 
   initialize: async () => {
     try {
+      if (typeof window === 'undefined') {
+        set({ initialized: true })
+        return
+      }
+
+      const supabase = getSupabaseClient()
       const { data: { session } } = await supabase.auth.getSession()
 
       if (session?.user) {
@@ -39,8 +45,7 @@ export const useAuth = create<AuthState>((set) => ({
         set({ initialized: true })
       }
 
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange((_event: string, session: any) => {
         if (session?.user) {
           set({
             user: {
@@ -60,6 +65,7 @@ export const useAuth = create<AuthState>((set) => ({
 
   signIn: async (email, password) => {
     set({ loading: true })
+    const supabase = getSupabaseClient()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -70,6 +76,7 @@ export const useAuth = create<AuthState>((set) => ({
 
   signUp: async (email, password) => {
     set({ loading: true })
+    const supabase = getSupabaseClient()
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -79,6 +86,7 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   signOut: async () => {
+    const supabase = getSupabaseClient()
     await supabase.auth.signOut()
     set({ user: null })
   },
