@@ -35,14 +35,14 @@ export default function Navbar() {
         {initialized && user ? (
           <Link
             href="/dashboard"
-            className="hidden sm:inline text-xs text-muted hover:text-dark font-medium transition-colors"
+            className="text-xs text-muted hover:text-dark font-medium transition-colors"
           >
             Dashboard
           </Link>
         ) : (
           <Link
             href="/login"
-            className="hidden sm:inline text-xs text-muted hover:text-dark font-medium transition-colors"
+            className="text-xs text-muted hover:text-dark font-medium transition-colors"
           >
             Masuk
           </Link>
