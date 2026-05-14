@@ -111,35 +111,37 @@ export default function DashboardPage() {
         </div>
 
         {/* Store Info Card */}
-        <div className="bg-white border border-gray-200 rounded-3xl p-5 mb-6 flex items-center gap-4 flex-wrap">
-          <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-green-400 rounded-[14px] flex items-center justify-center text-white text-xl shadow-green shrink-0">
-            <Icon.Store size={24} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-gray-900">{store.name}</div>
-            <div className="text-xs text-gray-400 mt-0.5 break-all">
-              {typeof window !== 'undefined' ? `${window.location.origin}/toko/${store.slug}` : `/toko/${store.slug}`}
+        <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-600 to-green-400 rounded-[14px] flex items-center justify-center text-white text-xl shadow-green shrink-0">
+              <Icon.Store size={24} />
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={async () => {
-                const url = `${window.location.origin}/toko/${store.slug}`
-                try { await navigator.clipboard.writeText(url) } catch {}
-                setCopied(true)
-                setTimeout(() => setCopied(false), 2000)
-              }}
-              className="py-2 px-4 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs hover:bg-gray-200 transition-colors"
-            >
-              {copied ? <span className="inline-flex items-center gap-1"><Icon.Check size={14} /> Disalin!</span> : 'Salin Link'}
-            </button>
-            <a
-              href={`/toko/${store.slug}`}
-              target="_blank"
-              className="py-2 px-4 bg-green-600 text-white rounded-xl font-bold text-xs hover:bg-green-700 transition-colors inline-flex items-center gap-1"
-            >
-              <Icon.ExternalLink size={14} /> Buka Toko
-            </a>
+            <div className="min-w-0 w-full sm:flex-1">
+              <div className="text-sm font-bold text-gray-900">{store.name}</div>
+              <div className="text-xs text-gray-400 mt-0.5 break-all">
+                {typeof window !== 'undefined' ? `${window.location.origin}/toko/${store.slug}` : `/toko/${store.slug}`}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={async () => {
+                  const url = `${window.location.origin}/toko/${store.slug}`
+                  try { await navigator.clipboard.writeText(url) } catch {}
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className="flex-1 sm:flex-none py-2 px-4 bg-gray-100 text-gray-700 rounded-xl font-bold text-xs hover:bg-gray-200 transition-colors text-center"
+              >
+                {copied ? <span className="inline-flex items-center gap-1"><Icon.Check size={14} /> Disalin!</span> : 'Salin Link'}
+              </button>
+              <a
+                href={`/toko/${store.slug}`}
+                target="_blank"
+                className="flex-1 sm:flex-none py-2 px-4 bg-green-600 text-white rounded-xl font-bold text-xs hover:bg-green-700 transition-colors inline-flex items-center justify-center gap-1"
+              >
+                <Icon.ExternalLink size={14} /> Buka Toko
+              </a>
+            </div>
           </div>
         </div>
 
