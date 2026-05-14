@@ -60,6 +60,7 @@ export async function createProduct(product: {
   emoji?: string
   bg_color?: string
   stock?: number
+  image_url?: string
 }) {
   const supabase = getSupabaseClient()
   return supabase.from('products').insert(product).select().single()
@@ -73,6 +74,7 @@ export async function updateProduct(id: string, updates: Partial<{
   bg_color: string
   stock: number
   is_active: boolean
+  image_url: string
 }>) {
   const supabase = getSupabaseClient()
   return supabase.from('products').update(updates).eq('id', id).select().single()

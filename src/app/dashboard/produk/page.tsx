@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import { useAuth } from '@/lib/store'
@@ -18,7 +18,8 @@ export default function ProdukPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '' })
+  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '', imageBase64: '' })
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!initialized) return
@@ -37,13 +38,13 @@ export default function ProdukPage() {
   }, [user, initialized])
 
   const resetForm = () => {
-    setForm({ name: '', price: '', unit: '', stock: '' })
+    setForm({ name: '', price: '', unit: '', stock: '', imageBase64: '' })
     setEditingId(null)
     setShowForm(false)
   }
 
   const openEdit = (p: Product) => {
-    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock) })
+    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock), imageBase64: p.image_url || '' })
     setEditingId(p.id)
     setShowForm(true)
   }
@@ -54,12 +55,13 @@ export default function ProdukPage() {
       return
     }
 
-    const payload = {
+    const payload: any = {
       name: form.name,
       price: parseInt(form.price),
       unit: form.unit,
       stock: parseInt(form.stock) || 0,
     }
+    if (form.imageBase64) payload.image_url = form.imageBase64
 
     if (editingId) {
       const { error } = await updateProduct(editingId, payload)
@@ -148,7 +150,33 @@ export default function ProdukPage() {
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   placeholder="0" type="number" />
               </div>
-              <div className="flex items-end gap-2">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Foto Produk</label>
+                <div className="flex items-center gap-3">
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    if (file.size > 2 * 1024 * 1024) { toast.error('Maksimal 2MB'); return }
+                    const reader = new FileReader()
+                    reader.onload = () => setForm({ ...form, imageBase64: reader.result as string })
+                    reader.readAsDataURL(file)
+                  }} className="hidden" />
+                  {form.imageBase64 ? (
+                    <div className="relative">
+                      <img src={form.imageBase64} alt="Preview" className="w-14 h-14 object-cover rounded-xl border border-gray-200" />
+                      <button onClick={() => setForm({ ...form, imageBase64: '' })}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px]">×</button>
+                    </div>
+                  ) : (
+                    <button onClick={() => fileInputRef.current?.click()}
+                      className="w-14 h-14 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 hover:border-green-500 hover:text-green-600 transition-all">
+                      <Icon.Camera size={20} />
+                    </button>
+                  )}
+                  <span className="text-[11px] text-gray-400">Opsional. Max 2MB.</span>
+                </div>
+              </div>
+              <div className="flex items-end gap-2 md:col-span-4">
                 <button onClick={handleSave} className="btn-primary-sm">Simpan</button>
                 <button onClick={resetForm} className="py-2.5 px-4 bg-white text-gray-500 border border-gray-200 rounded-2xl font-semibold text-sm hover:bg-gray-50">Batal</button>
               </div>
@@ -164,60 +192,95 @@ export default function ProdukPage() {
             <div className="text-gray-400 text-sm mb-4">Tambah produk pertama kamu</div>
           </div>
         ) : (
-          <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Produk</th>
-                  <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3 hidden md:table-cell">Harga</th>
-                  <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3 hidden md:table-cell">Unit</th>
-                  <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3 hidden md:table-cell">Stok</th>
-                  <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Status</th>
-                  <th className="text-right px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(p => (
-                  <tr key={p.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0" style={{ background: p.bg_color }}><Icon.Package size={18} /></div>
-                        <div>
-                          <div className="text-sm font-bold text-gray-900">{p.name}</div>
-                          <div className="flex md:hidden items-center gap-2 text-[11px] text-gray-500 mt-0.5 flex-wrap">
-                            <span className="font-semibold text-green-600">{formatRupiah(p.price)}</span>
-                            <span>{p.unit}</span>
-                            {p.stock !== undefined && <span className={p.stock <= 2 ? 'text-red-500 font-semibold' : ''}>Stok: {p.stock}</span>}
-                          </div>
-                        </div>
+          <>
+            {/* Mobile: Card View */}
+            <div className="flex flex-col gap-3 md:hidden">
+              {products.map(p => (
+                <div key={p.id} className="bg-white border border-gray-200 rounded-3xl p-4">
+                  <div className="flex items-start gap-3">
+                    {p.image_url ? (
+                      <img src={p.image_url} alt={p.name} className="w-16 h-16 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0" style={{ background: p.bg_color }}>
+                        <Icon.Package size={28} />
                       </div>
-                    </td>
-                    <td className="px-5 py-3.5 hidden md:table-cell">
-                      <div className="text-sm font-bold text-green-600">{formatRupiah(p.price)}</div>
-                    </td>
-                    <td className="px-5 py-3.5 hidden md:table-cell">
-                      <div className="text-sm text-gray-500">{p.unit}</div>
-                    </td>
-                    <td className="px-5 py-3.5 hidden md:table-cell">
-                      <div className={`text-sm font-semibold ${p.stock <= 2 ? 'text-red-500' : 'text-gray-900'}`}>{p.stock}</div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <button onClick={() => handleToggleActive(p)}
-                        className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${p.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                        {p.is_active ? 'Aktif' : 'Nonaktif'}
-                      </button>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => openEdit(p)} className="py-1.5 px-2.5 text-xs font-semibold text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors inline-flex items-center gap-1"><Icon.Pencil size={12} /> Edit</button>
-                        <button onClick={() => handleDelete(p.id)} className="py-1.5 px-2.5 text-xs font-semibold text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center gap-1"><Icon.X size={12} /> Hapus</button>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-gray-900">{p.name}</div>
+                      <div className="text-sm font-bold text-green-600 mt-0.5">{formatRupiah(p.price)}</div>
+                      <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-1 flex-wrap">
+                        <span>{p.unit}</span>
+                        <span className={p.stock <= 2 ? 'font-semibold text-red-500' : ''}>Stok: {p.stock}</span>
                       </div>
-                    </td>
+                    </div>
+                    <button onClick={() => handleToggleActive(p)}
+                      className={`text-[10px] font-bold px-2 py-1 rounded-full border shrink-0 ${p.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                      {p.is_active ? 'Aktif' : 'Nonaktif'}
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+                    <button onClick={() => openEdit(p)} className="flex-1 py-2 text-xs font-semibold text-gray-500 bg-gray-50 rounded-xl hover:bg-green-50 hover:text-green-600 transition-colors inline-flex items-center justify-center gap-1"><Icon.Pencil size={12} /> Edit</button>
+                    <button onClick={() => handleDelete(p.id)} className="flex-1 py-2 text-xs font-semibold text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition-colors inline-flex items-center justify-center gap-1"><Icon.X size={12} /> Hapus</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: Table */}
+            <div className="hidden md:block bg-white border border-gray-200 rounded-3xl overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Produk</th>
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Harga</th>
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Unit</th>
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Stok</th>
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Status</th>
+                    <th className="text-right px-5 py-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {products.map(p => (
+                    <tr key={p.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          {p.image_url ? (
+                            <img src={p.image_url} alt={p.name} className="w-10 h-10 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0" style={{ background: p.bg_color }}>
+                              <Icon.Package size={20} />
+                            </div>
+                          )}
+                          <div className="text-sm font-bold text-gray-900">{p.name}</div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="text-sm font-bold text-green-600">{formatRupiah(p.price)}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="text-sm text-gray-500">{p.unit}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className={`text-sm font-semibold ${p.stock <= 2 ? 'text-red-500' : 'text-gray-900'}`}>{p.stock}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <button onClick={() => handleToggleActive(p)}
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${p.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                          {p.is_active ? 'Aktif' : 'Nonaktif'}
+                        </button>
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => openEdit(p)} className="py-1.5 px-2.5 text-xs font-semibold text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors inline-flex items-center gap-1"><Icon.Pencil size={12} /> Edit</button>
+                          <button onClick={() => handleDelete(p.id)} className="py-1.5 px-2.5 text-xs font-semibold text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center gap-1"><Icon.X size={12} /> Hapus</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </main>
     </div>

@@ -21,6 +21,7 @@ export interface Product {
   bg_color: string
   stock: number
   is_active: boolean
+  image_url: string | null
   created_at: string
 }
 

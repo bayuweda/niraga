@@ -35,6 +35,7 @@ create table if not exists public.products (
   bg_color text default '#f0fdf4',
   stock integer default 0,
   is_active boolean default true,
+  image_url text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
