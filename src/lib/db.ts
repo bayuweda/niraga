@@ -40,6 +40,11 @@ export async function updateStore(id: string, updates: Partial<{
   return supabase.from('stores').update(updates).eq('id', id).select().single()
 }
 
+export async function deleteStore(id: string) {
+  const supabase = getSupabaseClient()
+  return supabase.from('stores').delete().eq('id', id)
+}
+
 // --- PRODUCTS ---
 
 export async function getProductsByStoreId(storeId: string) {
