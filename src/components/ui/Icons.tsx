@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Package, ClipboardList, Bot, Link, Settings,
+  LayoutDashboard, Package, ClipboardList, Link, Settings,
   Store, ShoppingCart, MessageCircle, DollarSign, TrendingUp, TrendingDown,
   User, Plus, ChevronRight, ChevronLeft, Check, X, Pencil, ArrowUpRight, ArrowDownRight,
   Search, Camera, Save, ExternalLink, Share2, Copy, ArrowLeft, ShoppingBag,
@@ -10,7 +10,6 @@ export const Icon = {
   Dashboard: (props: LucideProps) => <LayoutDashboard {...props} />,
   Package: (props: LucideProps) => <Package {...props} />,
   Orders: (props: LucideProps) => <ClipboardList {...props} />,
-  Bot: (props: LucideProps) => <Bot {...props} />,
   Link: (props: LucideProps) => <Link {...props} />,
   Settings: (props: LucideProps) => <Settings {...props} />,
   Store: (props: LucideProps) => <Store {...props} />,

@@ -39,7 +39,7 @@ export default function LoginPage() {
               Masuk ke Niraga
             </h1>
             <p className="text-gray-500">
-              Kelola toko dan bot AI kamu
+              Kelola toko online kamu
             </p>
           </div>
 

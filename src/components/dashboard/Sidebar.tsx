@@ -10,7 +10,6 @@ const menuItems = [
   { icon: Icon.Dashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Icon.Package, label: 'Produk', href: '/dashboard/produk' },
   { icon: Icon.Orders, label: 'Pesanan', href: '/dashboard/pesanan' },
-  { icon: Icon.Bot, label: 'Bot AI', href: '/dashboard/bot' },
   { icon: Icon.Link, label: 'Link Toko', href: '/dashboard/link' },
   { icon: Icon.Settings, label: 'Pengaturan', href: '/dashboard/settings' },
 ]

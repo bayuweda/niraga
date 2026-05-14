@@ -110,7 +110,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 mb-6">
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Money size={14} /> Pendapatan Hari Ini</span>}
             value={formatRupiah(metrics.todayRevenue)}
@@ -123,12 +123,7 @@ export default function DashboardPage() {
             change={metrics.todayOrders > 0 ? `${metrics.todayOrders} order baru` : 'Belum ada order'}
             trend={metrics.todayOrders > 0 ? 'up' : 'down'}
           />
-          <MetricCard
-            label={<span className="flex items-center gap-1.5"><Icon.Chat size={14} /> Chat Bot</span>}
-            value={String(metrics.todayChats)}
-            change={`${metrics.autoReplyRate}% auto-replied`}
-            trend="up"
-          />
+
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Package size={14} /> Produk Aktif</span>}
             value={String(metrics.activeProducts)}
@@ -174,43 +169,6 @@ export default function DashboardPage() {
                 ))}
               </div>
             )}
-          </div>
-
-          {/* Card Kanan — Bot AI */}
-          <div className="bg-white border border-gray-200 rounded-3xl p-6">
-            <div className="flex justify-between items-center mb-5">
-              <div className="text-sm font-bold text-gray-900">Bot AI</div>
-              <button className="text-xs font-semibold text-green-600 bg-transparent border-none cursor-pointer">
-                Atur →
-              </button>
-            </div>
-
-            <div className="flex items-center gap-2.5 bg-dark rounded-2xl p-3.5 mb-4">
-              <div className="w-9 h-9 bg-green-600 rounded-[10px] flex items-center justify-center text-white">
-                <Icon.Bot size={20} />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-white">Admin {store.name}</div>
-                <div className="flex items-center gap-1 text-[10px] text-green-400 mt-0.5">
-                  ● Online · Telegram
-                </div>
-              </div>
-            </div>
-
-            <div className="text-center py-6 text-gray-400 text-xs">
-              Chat bot akan muncul setelah ada interaksi
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-                <div className="font-display font-bold text-xl text-gray-900">{metrics.todayChats}</div>
-                <div className="text-[10px] text-gray-400 font-semibold mt-0.5">Chat hari ini</div>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
-                <div className="font-display font-bold text-xl text-gray-900">{metrics.autoReplyRate}%</div>
-                <div className="text-[10px] text-gray-400 font-semibold mt-0.5">Auto-reply rate</div>
-              </div>
-            </div>
           </div>
         </div>
       </main>
