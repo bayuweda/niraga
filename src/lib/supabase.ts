@@ -16,8 +16,10 @@ function getEnvVars() {
   return { url, key }
 }
 
-export function getSupabaseClient() {
-  if (supabaseInstance) return supabaseInstance
+type SupabaseClient = ReturnType<typeof createBrowserClient>
+
+export function getSupabaseClient(): SupabaseClient {
+  if (supabaseInstance) return supabaseInstance!
   if (typeof window === 'undefined') return null as any
 
   const env = getEnvVars()

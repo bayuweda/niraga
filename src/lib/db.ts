@@ -1,4 +1,4 @@
-import { createSupabaseClient } from './supabase-client'
+import { getSupabaseClient } from './supabase'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 type Result<T> = { data: T; error: null } | { data: null; error: PostgrestError | string }
@@ -6,12 +6,12 @@ type Result<T> = { data: T; error: null } | { data: null; error: PostgrestError 
 // --- STORES ---
 
 export async function getStoreBySlug(slug: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('stores').select('*').eq('slug', slug).single()
 }
 
 export async function getStoreByUserId(userId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('stores').select('*').eq('user_id', userId).single()
 }
 
@@ -24,7 +24,7 @@ export async function createStore(store: {
   whatsapp?: string
   shipping_info?: string
 }) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('stores').insert(store).select().single()
 }
 
@@ -36,14 +36,14 @@ export async function updateStore(id: string, updates: Partial<{
   shipping_info: string
   status: 'active' | 'inactive'
 }>) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('stores').update(updates).eq('id', id).select().single()
 }
 
 // --- PRODUCTS ---
 
 export async function getProductsByStoreId(storeId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('products').select('*').eq('store_id', storeId).eq('is_active', true).order('created_at')
 }
 
@@ -56,7 +56,7 @@ export async function createProduct(product: {
   bg_color?: string
   stock?: number
 }) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('products').insert(product).select().single()
 }
 
@@ -69,19 +69,19 @@ export async function updateProduct(id: string, updates: Partial<{
   stock: number
   is_active: boolean
 }>) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('products').update(updates).eq('id', id).select().single()
 }
 
 export async function deleteProduct(id: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('products').delete().eq('id', id)
 }
 
 // --- ORDERS ---
 
 export async function getOrdersByStoreId(storeId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('orders').select('*').eq('store_id', storeId).order('created_at', { ascending: false })
 }
 
@@ -92,19 +92,19 @@ export async function createOrder(order: {
   items: { product_id: string; name: string; qty: number; price: number }[]
   total: number
 }) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('orders').insert(order).select().single()
 }
 
 export async function updateOrderStatus(id: string, status: 'new' | 'confirmed' | 'done' | 'cancelled') {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('orders').update({ status }).eq('id', id).select().single()
 }
 
 // --- DASHBOARD METRICS ---
 
 export async function getDashboardMetrics(storeId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
@@ -115,13 +115,13 @@ export async function getDashboardMetrics(storeId: string) {
     supabase.from('chat_logs').select('id, sender').eq('store_id', storeId).gte('created_at', today.toISOString()),
   ])
 
-  const totalRevenue = ordersRes.data?.reduce((sum, o) => sum + o.total, 0) ?? 0
-  const todayRevenue = todayOrdersRes.data?.reduce((sum, o) => sum + o.total, 0) ?? 0
+  const totalRevenue = ordersRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
+  const todayRevenue = todayOrdersRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
   const todayOrders = todayOrdersRes.data?.length ?? 0
   const activeProducts = productsRes.data?.length ?? 0
-  const lowStockProducts = productsRes.data?.filter(p => p.stock !== null && p.stock <= 2).length ?? 0
+  const lowStockProducts = productsRes.data?.filter((p: any) => p.stock !== null && p.stock <= 2).length ?? 0
   const todayChats = chatRes.data?.length ?? 0
-  const autoReplied = chatRes.data?.filter(c => c.sender === 'bot').length ?? 0
+  const autoReplied = chatRes.data?.filter((c: any) => c.sender === 'bot').length ?? 0
   const autoReplyRate = todayChats > 0 ? Math.round((autoReplied / todayChats) * 100) : 0
 
   return {
@@ -138,14 +138,14 @@ export async function getDashboardMetrics(storeId: string) {
 // --- CHAT LOGS ---
 
 export async function getChatLogs(storeId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('chat_logs').select('*').eq('store_id', storeId).order('created_at', { ascending: false }).limit(50)
 }
 
 // --- BOT SETTINGS ---
 
 export async function getBotSettings(storeId: string) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('bot_settings').select('*').eq('store_id', storeId).single()
 }
 
@@ -156,6 +156,6 @@ export async function upsertBotSettings(settings: {
   prompt_personality?: string
   auto_reply_enabled?: boolean
 }) {
-  const supabase = createSupabaseClient()
+  const supabase = getSupabaseClient()
   return supabase.from('bot_settings').upsert(settings).select().single()
 }

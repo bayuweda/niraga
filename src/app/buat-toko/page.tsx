@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatRupiah } from '@/lib/utils'
 import { useAuth } from '@/lib/store'
-import { createSupabaseClient } from '@/lib/supabase-client'
+import { getSupabaseClient } from '@/lib/supabase'
 import { createStore, createProduct } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 
@@ -74,7 +74,7 @@ export default function BuatTokoPage() {
     const timer = setTimeout(async () => {
       setUsernameStatus('checking')
       try {
-        const supabase = createSupabaseClient()
+        const supabase = getSupabaseClient()
         const { data } = await supabase.rpc('check_username_available', { uname: store.username })
         setUsernameStatus(data ? 'available' : 'taken')
       } catch {
@@ -154,7 +154,8 @@ export default function BuatTokoPage() {
       })
 
       if (error || !newStore) {
-        toast.error('Gagal menyimpan toko')
+        console.error('Gagal simpan toko:', error, newStore)
+        toast.error(error?.message || 'Gagal menyimpan toko')
         setSaving(false)
         return
       }
