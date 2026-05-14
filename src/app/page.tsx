@@ -1,6 +1,5 @@
 'use client'
 
-import Navbar from '@/components/ui/Navbar'
 import Link from 'next/link'
 import { Icon, WhatsAppIcon, TelegramIcon, InstagramIcon } from '@/components/ui/Icons'
 
@@ -11,8 +10,6 @@ export default function Home() {
 
   return (
     <main>
-      <Navbar />
-
       {/* SECTION 1: HERO */}
       <section className="pt-16 min-h-screen flex items-center relative overflow-hidden py-20 md:py-28 lg:py-36">
         <div className="hero-glow" />

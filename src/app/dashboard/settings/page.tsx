@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Navbar from '@/components/ui/Navbar'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, updateStore, deleteStore } from '@/lib/db'
@@ -71,7 +70,6 @@ export default function SettingsPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 pt-16">
-      <Navbar />
       <DashboardSidebar currentPage="Pengaturan" />
 
       <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0">

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store'
-import Navbar from '@/components/ui/Navbar'
 import { Icon } from '@/components/ui/Icons'
 
 export default function RegisterPage() {
@@ -47,8 +46,7 @@ export default function RegisterPage() {
   if (success) {
     return (
       <main className="min-h-screen bg-gray-50 pt-16">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4">
+      <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4">
           <div className="text-center">
             <div className="mb-4"><Icon.Save size={64} className="text-green-600 mx-auto" /></div>
             <h1 className="font-display font-bold text-2xl text-gray-900 mb-2">
@@ -65,8 +63,6 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 pt-16">
-      <Navbar />
-
       <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Navbar from '@/components/ui/Navbar'
 import MetricCard from '@/components/ui/MetricCard'
 import Badge from '@/components/ui/Badge'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
@@ -94,8 +93,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-50 pt-16">
-      <Navbar />
-
       <DashboardSidebar currentPage="Dashboard" />
 
       {/* MAIN CONTENT */}

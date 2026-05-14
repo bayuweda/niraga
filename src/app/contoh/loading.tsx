@@ -1,9 +1,6 @@
-import NavbarSkeleton from '@/components/ui/NavbarSkeleton'
-
 export default function ContohLoading() {
   return (
     <main className="min-h-screen bg-cream pt-16">
-      <NavbarSkeleton />
       <div className="container-app py-10 space-y-4">
         <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
         <div className="h-4 bg-gray-200 rounded w-72 animate-pulse" />

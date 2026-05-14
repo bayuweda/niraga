@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Navbar from '@/components/ui/Navbar'
 import { formatRupiah } from '@/lib/utils'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 
@@ -39,7 +38,6 @@ export default function ContohPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 pt-16">
-      <Navbar />
       <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-4">
