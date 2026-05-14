@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import {
   ArrowUpRight,
@@ -34,9 +35,8 @@ export default function MetricCard({
   trend,
   href,
 }: MetricCardProps) {
-  const Card = href ? 'a' : 'div'
-  return (
-    <Card href={href} className="card-base flex flex-col gap-2">
+  const inner = (
+    <div className="card-base flex flex-col gap-2 cursor-pointer">
       <div className="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
         {label}
       </div>
@@ -52,6 +52,12 @@ export default function MetricCard({
         <TrendIcon trend={trend} />
         {change}
       </div>
-    </Card>
+    </div>
   )
+
+  if (href) {
+    return <Link href={href}>{inner}</Link>
+  }
+
+  return inner
 }
