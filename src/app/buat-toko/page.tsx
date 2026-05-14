@@ -123,7 +123,7 @@ export default function BuatTokoPage() {
   }
 
   const slug = store.username || 'toko'
-  const storeUrl = `niraga.id/${slug}`
+  const storeUrl = `niraga.vercel.app/${slug}`
 
   const handleCreateStore = async () => {
     if (!initialized) {
@@ -252,7 +252,7 @@ export default function BuatTokoPage() {
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Link Toko *</label>
                 <div className="flex items-stretch">
-                  <div className="flex items-center px-3.5 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-muted font-medium">niraga.id/</div>
+                  <div className="flex items-center px-3.5 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-muted font-medium">niraga.vercel.app/</div>
                   <input
                     type="text"
                     maxLength={30}
