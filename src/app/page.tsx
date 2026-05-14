@@ -19,7 +19,7 @@ export default function Home() {
 
         <div className="relative z-10 w-full">
           <div className="container-app">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* LEFT */}
               <div className="lg:py-10">
                 <div className="tag-pill mb-6 w-fit">
@@ -67,8 +67,8 @@ export default function Home() {
               </div>
 
               {/* RIGHT - Phone Mockup */}
-              <div className="hidden lg:flex justify-center items-center relative">
-                <div className="phone-mock">
+              <div className="flex justify-center items-center relative">
+                <div className="phone-mock !w-[220px] lg:!w-[260px]">
                   <div className="phone-bar">
                     <div className="phone-store-info">
                       <div className="phone-av"><Icon.Store size={18} className="text-white" /></div>
