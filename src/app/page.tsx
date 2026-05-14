@@ -2,6 +2,7 @@
 
 import Navbar from '@/components/ui/Navbar'
 import Link from 'next/link'
+import { Icon, WhatsAppIcon, TelegramIcon, InstagramIcon } from '@/components/ui/Icons'
 
 export default function Home() {
   const handleGetStarted = () => {
@@ -41,15 +42,23 @@ export default function Home() {
                   <button onClick={handleGetStarted} className="btn-primary text-base px-8 py-3.5 lg:px-9 lg:py-4">
                     Buat Toko Sekarang →
                   </button>
-                  <a href="/toko/dapur-dinda" className="btn-outline text-base py-3.5 px-8">
+                  <a href="/contoh" className="btn-outline text-base py-3.5 px-8">
                     Lihat Contoh
                   </a>
                 </div>
 
                 <div className="flex items-center gap-2.5">
                   <div className="trust-avatars">
-                    {['🧑', '👩', '👨', '🧕', '👦'].map((e, i) => (
-                      <div key={i} className="trust-av">{e}</div>
+                    {[
+                      '#22c55e',
+                      '#ec4899',
+                      '#3b82f6',
+                      '#a855f7',
+                      '#f97316',
+                    ].map((bg, i) => (
+                      <div key={i} className="trust-av" style={{ background: bg }}>
+                        <Icon.User size={14} color="white" />
+                      </div>
                     ))}
                   </div>
                   <div className="trust-text">
@@ -63,23 +72,23 @@ export default function Home() {
                 <div className="phone-mock">
                   <div className="phone-bar">
                     <div className="phone-store-info">
-                      <div className="phone-av">🥟</div>
+                      <div className="phone-av"><Icon.Store size={18} className="text-white" /></div>
                       <div>
                         <div className="phone-sname">Dapur Dinda</div>
                         <div className="phone-ssub">4 produk tersedia</div>
                       </div>
                     </div>
-                    <div className="phone-share">🔗</div>
+                    <div className="phone-share"><Icon.Link size={18} /></div>
                   </div>
                   <div className="phone-products">
                     {[
-                      { e: '🥟', n: 'Siomay Frozen', p: '45.000' },
-                      { e: '🍜', n: 'Bakso Sapi', p: '55.000' },
-                      { e: '🦐', n: 'Udang Crispy', p: '65.000' },
-                      { e: '🥩', n: 'Nugget Ayam', p: '42.000' },
+                      { img: '/assets/siomay.png', n: 'Siomay Frozen', p: '45.000' },
+                      { img: '/assets/bakso.png', n: 'Bakso Sapi', p: '55.000' },
+                      { img: '/assets/udang.jpg', n: 'Udang Crispy', p: '65.000' },
+                      { img: '/assets/nugget.png', n: 'Nugget Ayam', p: '42.000' },
                     ].map((p, i) => (
                       <div key={i} className="phone-prod">
-                        <div className="phone-prod-emoji">{p.e}</div>
+                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} className="w-full aspect-square rounded-lg object-cover" /></div>
                         <div className="phone-prod-name">{p.n}</div>
                         <div className="phone-prod-price">Rp {p.p}</div>
                       </div>
@@ -97,14 +106,14 @@ export default function Home() {
                 {/* WA Float */}
                 <div className="wa-float">
                   <div className="wa-header">
-                    <div className="wa-icon">✓</div>
+                    <div className="wa-icon"><Icon.Check size={16} className="text-green-500" /></div>
                     <div className="wa-name">Pesan otomatis terkirim!</div>
                   </div>
                   <div className="wa-msg">
-                    Halo Dapur Dinda! 👋{' '}
+                    Halo Dapur Dinda!{' '}
                     Saya mau pesan:{'\n'}
                     • Siomay × 2 — Rp 90.000{'\n'}
-                    Total: Rp 90.000 🙏
+                    Total: Rp 90.000
                   </div>
                 </div>
               </div>
@@ -132,10 +141,10 @@ export default function Home() {
 
           <div className="flow-steps">
             {[
-              { e: '🏪', n: '01', t: 'Buat Toko', d: 'Masukkan nama toko dan nomor WA kamu. Selesai dalam 30 detik.' },
-              { e: '📦', n: '02', t: 'Tambah Produk', d: 'Input foto, nama, dan harga produk. Bisa sebanyak yang kamu mau.' },
-              { e: '🔗', n: '03', t: 'Share Link', d: 'Dapat link toko unik. Kirim ke pelanggan via WA, IG Story, atau bio.' },
-              { e: '✅', n: '04', t: 'Terima Order', d: 'Pelanggan pilih produk → klik Pesan → WA kamu langsung berbunyi.' },
+              { e: <Icon.Store size={24} />, n: '01', t: 'Buat Toko', d: 'Masukkan nama toko dan nomor WA kamu. Selesai dalam 30 detik.' },
+              { e: <Icon.Package size={24} />, n: '02', t: 'Tambah Produk', d: 'Input foto, nama, dan harga produk. Bisa sebanyak yang kamu mau.' },
+              { e: <Icon.Link size={24} />, n: '03', t: 'Share Link', d: 'Dapat link toko unik. Kirim ke pelanggan via WA, IG Story, atau bio.' },
+              { e: <Icon.Check size={24} className="text-green-500" />, n: '04', t: 'Terima Order', d: 'Pelanggan pilih produk → klik Pesan → WA kamu langsung berbunyi.' },
             ].map((s, i) => (
               <div key={i} className="flow-step">
                 <div className="flow-num">
@@ -170,28 +179,30 @@ export default function Home() {
           <div className="why-grid">
             {/* Featured Card */}
             <div className="why-card featured">
-              <div className="wc-ic" style={{ background: 'rgba(255,255,255,.08)' }}>💬</div>
+              <div className="wc-ic">
+                <WhatsAppIcon size={24} />
+              </div>
               <div className="wc-t">Pesan WA otomatis, rapi, langsung masuk</div>
               <div className="wc-d">Pelanggan tinggal pilih produk dan klik "Pesan" — WA kamu langsung dapat pesan yang sudah terformat dengan nama produk, jumlah, dan total harga. Kamu tinggal konfirmasi.</div>
               <div className="wc-wa-preview">
                 <div className="wa-bubble">
                   <div className="wa-bubble-text">
-                    Halo Dapur Dinda! 👋<br />
+                    Halo Dapur Dinda!<br />
                     Saya mau pesan:<br />
                     • Siomay Frozen Ayam × 2 — Rp 90.000<br />
                     • Bakso Sapi Premium × 1 — Rp 55.000<br /><br />
                     <b>Total: Rp 145.000</b><br />
-                    Mohon konfirmasinya ya kak 🙏
+                    Mohon konfirmasinya ya kak
                   </div>
                 </div>
               </div>
             </div>
 
             {[
-              { ic: '⚡', t: 'Setup 2 menit', d: 'Tidak perlu daftar dulu. Langsung buat toko, tambah produk, dan share link — semua dalam hitungan menit.' },
-              { ic: '🆓', t: 'Gratis selamanya', d: 'Fitur utama gratis tanpa batas. Tidak ada trial, tidak ada kartu kredit, tidak ada biaya tersembunyi.' },
-              { ic: '🔗', t: 'Link toko sendiri', d: 'Dapat link niraga.id/namatoko-mu yang bisa ditempel di bio IG, WA, atau dikirim langsung ke pelanggan.' },
-              { ic: '📱', t: 'Tampil keren di HP', d: 'Toko kamu otomatis tampil bagus di layar HP pelanggan — seperti app sungguhan, tanpa mereka harus install apapun.' },
+              { ic: <Icon.Zap size={24} />, t: 'Setup 2 menit', d: 'Tidak perlu daftar dulu. Langsung buat toko, tambah produk, dan share link — semua dalam hitungan menit.' },
+              { ic: <Icon.Star size={24} />, t: 'Gratis selamanya', d: 'Fitur utama gratis tanpa batas. Tidak ada trial, tidak ada kartu kredit, tidak ada biaya tersembunyi.' },
+              { ic: <Icon.Link size={24} />, t: 'Link toko sendiri', d: 'Dapat link niraga.id/namatoko-mu yang bisa ditempel di bio IG, WA, atau dikirim langsung ke pelanggan.' },
+              { ic: <Icon.Sparkles size={24} />, t: 'Tampil keren di HP', d: 'Toko kamu otomatis tampil bagus di layar HP pelanggan — seperti app sungguhan, tanpa mereka harus install apapun.' },
             ].map((w, i) => (
               <div key={i} className="why-card">
                 <div className="wc-ic">{w.ic}</div>
@@ -222,9 +233,9 @@ export default function Home() {
 
             <div className="flex flex-col gap-1">
               {[
-                { b: { ic: '😩', t: 'Kirim foto produk satu-satu' }, a: { ic: '🛍️', t: 'Katalog online yang bisa dishare' }, bd: 'Capek screenshot dan kirim foto berulang ke setiap pelanggan.', ad: 'Pelanggan buka link, lihat semua produk, langsung pilih.' },
-                { b: { ic: '📝', t: 'Catat order manual di notes' }, a: { ic: '✅', t: 'Pesan WA otomatis dan rapi' }, bd: 'Sering salah catat, lupa, atau bingung siapa yang sudah bayar.', ad: 'Setiap order masuk sudah terformat lengkap di WA kamu.' },
-                { b: { ic: '😵', t: 'Jawab pertanyaan yang sama terus' }, a: { ic: '⚡', t: 'Info produk sudah ada di toko' }, bd: '"Masih ada stok?" "Harganya berapa?" — tiap hari, berkali-kali.', ad: 'Pelanggan lihat sendiri stok, harga, dan detail produk.' },
+                { b: { ic: <Icon.X size={20} color="white" />, t: 'Kirim foto produk satu-satu' }, a: { ic: <Icon.ShoppingBag size={20} color="#22c55e" />, t: 'Katalog online yang bisa dishare' }, bd: 'Capek screenshot dan kirim foto berulang ke setiap pelanggan.', ad: 'Pelanggan buka link, lihat semua produk, langsung pilih.' },
+                { b: { ic: <Icon.FileText size={20} />, t: 'Catat order manual di notes' }, a: { ic: <Icon.Check size={20} className="text-green-500" />, t: 'Pesan WA otomatis dan rapi' }, bd: 'Sering salah catat, lupa, atau bingung siapa yang sudah bayar.', ad: 'Setiap order masuk sudah terformat lengkap di WA kamu.' },
+                { b: { ic: <Icon.X size={20} color="white" />, t: 'Jawab pertanyaan yang sama terus' }, a: { ic: <Icon.Zap size={20} className="text-yellow-500" />, t: 'Info produk sudah ada di toko' }, bd: '"Masih ada stok?" "Harganya berapa?" — tiap hari, berkali-kali.', ad: 'Pelanggan lihat sendiri stok, harga, dan detail produk.' },
               ].map((p, i) => (
                 <div key={i}>
                   <div className="pain-card">
@@ -264,7 +275,9 @@ export default function Home() {
               Buat Toko Gratis Sekarang →
             </button>
             <div className="cta-note">
-              ✓ Gratis selamanya &nbsp;·&nbsp; ✓ Tanpa kartu kredit &nbsp;·&nbsp; ✓ Tanpa install apapun
+              <Icon.Check size={14} className="inline-block align-middle text-green-500" /> Gratis selamanya &nbsp;·&nbsp;
+              <Icon.Check size={14} className="inline-block align-middle text-green-500" /> Tanpa kartu kredit &nbsp;·&nbsp;
+              <Icon.Check size={14} className="inline-block align-middle text-green-500" /> Tanpa install apapun
             </div>
           </div>
         </div>
@@ -277,7 +290,7 @@ export default function Home() {
             Nira<span className="text-gray-900 font-normal">ga</span>
           </div>
           <div className="text-xs text-gray-400">
-            © 2025 Niraga. Dibuat dengan ❤️ untuk UMKM Indonesia.
+            © 2025 Niraga. Dibuat dengan love untuk UMKM Indonesia.
           </div>
         </div>
       </footer>

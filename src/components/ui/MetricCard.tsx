@@ -8,7 +8,7 @@ import {
 type Trend = 'up' | 'down' | 'neutral'
 
 interface MetricCardProps {
-  label: string
+  label: React.ReactNode
   value: string
   change: string
   trend: Trend

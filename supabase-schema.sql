@@ -18,6 +18,7 @@ create table if not exists public.stores (
   slug text unique not null,
   description text,
   logo_emoji text default '🏪',
+  whatsapp text,
   status text default 'active' check (status in ('active', 'inactive')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

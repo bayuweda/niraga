@@ -21,7 +21,10 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-      router.push('/dashboard')
+      const redirect = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('redirect') || '/dashboard'
+        : '/dashboard'
+      router.push(redirect)
     }
   }
 

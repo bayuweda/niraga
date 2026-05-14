@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store'
 import Navbar from '@/components/ui/Navbar'
+import { Icon } from '@/components/ui/Icons'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -34,8 +35,11 @@ export default function RegisterPage() {
       setError(error.message)
     } else {
       setSuccess(true)
+      const redirect = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('redirect') || ''
+        : ''
       setTimeout(() => {
-        router.push('/login')
+        router.push(`/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`)
       }, 3000)
     }
   }
@@ -46,7 +50,7 @@ export default function RegisterPage() {
         <Navbar />
         <div className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4">
           <div className="text-center">
-            <div className="text-6xl mb-4">📧</div>
+            <div className="mb-4"><Icon.Save size={64} className="text-green-600 mx-auto" /></div>
             <h1 className="font-display font-bold text-2xl text-gray-900 mb-2">
               Cek Email Kamu
             </h1>

@@ -41,7 +41,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ['Instrument Serif', 'serif'],
-        sans: ['Cabinet Grotesk', 'sans-serif'],
+        sans: ['Poppins', 'sans-serif'],
       },
       boxShadow: {
         'green': '0 8px 32px rgba(22,163,74,.22)',
