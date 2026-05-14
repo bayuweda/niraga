@@ -257,8 +257,8 @@ export default function BuatTokoPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Link Toko *</label>
-                <div className="flex items-stretch">
-                  <div className="flex items-center px-3.5 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-muted font-medium">niraga.vercel.app/</div>
+                <div className="flex flex-col gap-1.5">
+                  <div className="text-xs text-muted font-medium px-1 break-all">niraga.vercel.app/</div>
                   <input
                     type="text"
                     maxLength={30}
@@ -268,7 +268,7 @@ export default function BuatTokoPage() {
                       manualUsername.current = true
                       setStore({ ...store, username: val })
                     }}
-                    className={`flex-1 px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all ${usernameFieldClass('border rounded-r-xl bg-cream border-gray-200 focus:border-green-500 focus:ring-green-500/20')}`}
+                    className={`w-full px-4 py-3 text-sm border rounded-xl bg-cream focus:outline-none focus:ring-2 transition-all ${usernameFieldClass('border-gray-200 focus:border-green-500 focus:ring-green-500/20')}`}
                     placeholder="nama-toko"
                   />
                 </div>
