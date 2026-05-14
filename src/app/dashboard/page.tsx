@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import MetricCard from '@/components/ui/MetricCard'
 import Badge from '@/components/ui/Badge'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
@@ -18,6 +19,7 @@ const statusLabel: Record<string, string> = {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
@@ -36,7 +38,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!initialized) return
     if (!user) {
-      window.location.href = '/login'
+      router.push('/login')
       return
     }
 

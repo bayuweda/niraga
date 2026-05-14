@@ -1,11 +1,13 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Icon, WhatsAppIcon, TelegramIcon, InstagramIcon } from '@/components/ui/Icons'
 
 export default function Home() {
+  const router = useRouter()
   const handleGetStarted = () => {
-    window.location.href = '/buat-toko'
+    router.push('/buat-toko')
   }
 
   return (

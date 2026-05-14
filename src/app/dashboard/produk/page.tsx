@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, getProductsByStoreId, createProduct, updateProduct, deleteProduct } from '@/lib/db'
@@ -10,6 +11,7 @@ import type { Store, Product } from '@/lib/types'
 import { toast } from 'sonner'
 
 export default function ProdukPage() {
+  const router = useRouter()
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [products, setProducts] = useState<Product[]>([])
@@ -20,7 +22,7 @@ export default function ProdukPage() {
 
   useEffect(() => {
     if (!initialized) return
-    if (!user) { window.location.href = '/login'; return }
+    if (!user) { router.push('/login'); return }
 
     async function load() {
       if (!user) return

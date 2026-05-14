@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, updateStore, deleteStore } from '@/lib/db'
@@ -9,6 +10,7 @@ import type { Store } from '@/lib/types'
 import { toast } from 'sonner'
 
 export default function SettingsPage() {
+  const router = useRouter()
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
@@ -16,7 +18,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!initialized) return
-    if (!user) { window.location.href = '/login'; return }
+    if (!user) { router.push('/login'); return }
 
     async function load() {
       if (!user) return
@@ -65,7 +67,7 @@ export default function SettingsPage() {
     const { error } = await deleteStore(store.id)
     if (error) { toast.error('Gagal menghapus toko'); return }
     toast.success('Toko berhasil dihapus')
-    window.location.href = '/'
+    router.push('/')
   }
 
   return (

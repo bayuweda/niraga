@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import Badge from '@/components/ui/Badge'
 import { useAuth } from '@/lib/store'
@@ -31,6 +32,7 @@ const statusNext: Record<string, { label: string; status: 'confirmed' | 'done' |
 }
 
 export default function PesananPage() {
+  const router = useRouter()
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
@@ -39,7 +41,7 @@ export default function PesananPage() {
 
   useEffect(() => {
     if (!initialized) return
-    if (!user) { window.location.href = '/login'; return }
+    if (!user) { router.push('/login'); return }
 
     async function load() {
       if (!user) return

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId } from '@/lib/db'
@@ -8,6 +9,7 @@ import { Icon } from '@/components/ui/Icons'
 import type { Store } from '@/lib/types'
 
 export default function LinkPage() {
+  const router = useRouter()
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [copied, setCopied] = useState(false)
@@ -15,7 +17,7 @@ export default function LinkPage() {
 
   useEffect(() => {
     if (!initialized) return
-    if (!user) { window.location.href = '/login'; return }
+    if (!user) { router.push('/login'); return }
     getStoreByUserId(user.id).then(({ data }) => {
       if (data) setStore(data)
       setLoading(false)
