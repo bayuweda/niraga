@@ -152,19 +152,21 @@ export default function DashboardPage() {
             value={formatRupiah(metrics.todayRevenue)}
             change={`${metrics.todayOrders} order masuk`}
             trend="up"
+            href="/dashboard/pesanan"
           />
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Orders size={14} /> Order Masuk</span>}
             value={String(metrics.todayOrders)}
             change={metrics.todayOrders > 0 ? `${metrics.todayOrders} order baru` : 'Belum ada order'}
             trend={metrics.todayOrders > 0 ? 'up' : 'down'}
+            href="/dashboard/pesanan"
           />
-
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Package size={14} /> Produk Aktif</span>}
             value={String(metrics.activeProducts)}
             change={metrics.lowStockProducts > 0 ? `⚠ ${metrics.lowStockProducts} hampir habis` : 'Stok aman'}
             trend={metrics.lowStockProducts > 0 ? 'down' : 'up'}
+            href="/dashboard/produk"
           />
         </div>
 

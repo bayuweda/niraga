@@ -12,6 +12,7 @@ interface MetricCardProps {
   value: string
   change: string
   trend: Trend
+  href?: string
 }
 
 const trendStyles: Record<Trend, string> = {
@@ -31,9 +32,11 @@ export default function MetricCard({
   value,
   change,
   trend,
+  href,
 }: MetricCardProps) {
+  const Card = href ? 'a' : 'div'
   return (
-    <div className="card-base flex flex-col gap-2">
+    <Card href={href} className="card-base flex flex-col gap-2">
       <div className="text-xs font-semibold text-gray-400 flex items-center gap-1.5">
         {label}
       </div>
@@ -49,6 +52,6 @@ export default function MetricCard({
         <TrendIcon trend={trend} />
         {change}
       </div>
-    </div>
+    </Card>
   )
 }
