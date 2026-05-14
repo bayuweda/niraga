@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatRupiah } from '@/lib/utils'
@@ -20,7 +20,7 @@ interface Product {
 
 export default function BuatTokoPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, initialized } = useAuth()
   const [step, setStep] = useState(0)
   const [store, setStore] = useState({ name: '', wa: '', desc: '' })
   const [products, setProducts] = useState<Product[]>([
@@ -30,6 +30,23 @@ export default function BuatTokoPage() {
   const [newProd, setNewProd] = useState({ emoji: '', name: '', price: '', unit: '', imageBase64: '' })
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // Restore wizard data after login/register redirect
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedStore = sessionStorage.getItem('niraga_wizard_store')
+        const savedProducts = sessionStorage.getItem('niraga_wizard_products')
+        if (savedStore) setStore(JSON.parse(savedStore))
+        if (savedProducts) setProducts(JSON.parse(savedProducts))
+      } catch {}
+    }
+  }, [])
+
+  const saveWizardData = () => {
+    sessionStorage.setItem('niraga_wizard_store', JSON.stringify(store))
+    sessionStorage.setItem('niraga_wizard_products', JSON.stringify(products))
+  }
 
   const steps = ['Info Toko', 'Produk', 'Preview & Link']
   const fileInputRef = { current: null as any }
@@ -72,7 +89,13 @@ export default function BuatTokoPage() {
   const storeUrl = `niraga.id/${slug}`
 
   const handleCreateStore = async () => {
+    if (!initialized) {
+      toast.loading('Memeriksa sesi...')
+      return
+    }
+
     if (!user) {
+      saveWizardData()
       router.push(`/register?redirect=/buat-toko`)
       return
     }
@@ -104,6 +127,8 @@ export default function BuatTokoPage() {
         if (prodErr) console.error('Gagal simpan produk:', prodErr)
       }
 
+      sessionStorage.removeItem('niraga_wizard_store')
+      sessionStorage.removeItem('niraga_wizard_products')
       toast.success('Toko berhasil dibuat!')
       router.push('/dashboard')
     } catch {
