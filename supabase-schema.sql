@@ -19,6 +19,7 @@ create table if not exists public.stores (
   description text,
   logo_emoji text default '🏪',
   whatsapp text,
+  shipping_info text,
   status text default 'active' check (status in ('active', 'inactive')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -144,3 +145,12 @@ $$ language plpgsql security definer;
 create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- Username availability check
+create or replace function public.check_username_available(uname text)
+returns boolean
+language sql
+stable
+as $$
+  select not exists (select 1 from public.stores where slug = uname);
+$$;

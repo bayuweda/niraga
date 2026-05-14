@@ -40,7 +40,7 @@ export default function ContohPage() {
   return (
     <div className="min-h-screen bg-gray-100 pt-16">
       <Navbar />
-      <div className="max-w-[440px] mx-auto pb-[100px]">
+      <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-4">
           <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
@@ -62,8 +62,18 @@ export default function ContohPage() {
           </div>
         </div>
 
+        {/* SHIPPING INFO */}
+        <div className="px-3.5 mb-4">
+          <div className="flex items-start gap-2.5 bg-warm border border-border rounded-xl px-3.5 py-3">
+            <div className="flex-shrink-0 mt-0.5"><Icon.Truck size={14} className="text-muted" /></div>
+            <div className="text-[11px] text-body leading-relaxed">
+              Min. order Rp 50.000 · COD area Depok & Bekasi · Order sebelum jam 3 sore
+            </div>
+          </div>
+        </div>
+
         {/* PRODUCTS */}
-        <div className="px-3.5 mb-5">
+        <div className="px-3.5 mb-3">
           <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2.5 px-0.5">Pilih Produk</div>
           <div className="grid grid-cols-2 gap-2.5">
             {DEMO_PRODUCTS.map(p => (
@@ -88,13 +98,28 @@ export default function ContohPage() {
             ))}
           </div>
         </div>
+        {/* CHAT DULU */}
+        <div className="flex items-center gap-3 bg-white border border-border rounded-2xl p-4 mx-3.5 mb-5">
+          <div className="flex-shrink-0"><Icon.Chat size={24} className="text-muted" /></div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-dark mb-0.5">Mau tanya dulu?</div>
+            <div className="text-xs text-muted">Chat langsung sebelum order, kami siap bantu!</div>
+          </div>
+          <button
+            onClick={() => window.open('https://wa.me/6281234567890', '_blank')}
+            className="flex-shrink-0 py-2.5 px-4 bg-green-600 text-white rounded-xl font-bold text-xs shadow-green hover:bg-green-700 transition-all"
+          >
+            Chat WA
+          </button>
+        </div>
+
         <div style={{ height: totalQty > 0 ? 120 : 60 }} />
       </div>
 
       {/* CART BAR */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-white border-t-2 border-gray-200 p-3.5 z-50">
         {totalQty === 0 ? (
-          <div className="text-center py-3 text-sm text-gray-500">Tap produk untuk memilih</div>
+          <div className="text-center py-3 text-xs text-muted">👆 Tap produk untuk memilih</div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-2.5">

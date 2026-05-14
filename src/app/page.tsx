@@ -260,7 +260,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 5: CTA */}
+      {/* SECTION 5: SOCIAL PROOF */}
+      <section className="bg-green-50 border-y border-green-100 py-20 md:py-28 lg:py-32">
+        <div className="text-center mb-12">
+          <div className="tag-pill mb-4 w-fit mx-auto">
+            <div className="live-dot" />
+            Kata Mereka
+          </div>
+          <h2 className="font-bold text-gray-900 text-[clamp(24px,3vw,40px)] tracking-tight leading-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
+            Seller yang udah pakai<br />
+            Niraga bilang begini
+          </h2>
+        </div>
+        <div className="container-app">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                avatar: '👩',
+                name: 'Siti Rahayu',
+                role: 'Seller Frozen Food, Depok',
+                quote: 'Dulu tiap hari capek kirim foto produk satu-satu ke pelanggan. Sekarang tinggal share link, mereka pilih sendiri. Order masuk rapi di WA, tinggal konfirmasi aja.',
+              },
+              {
+                avatar: '🧕',
+                name: 'Fatimah Azahra',
+                role: 'Reseller Baju, Bandung',
+                quote: 'Setup-nya beneran cepat banget. 5 menit toko udah jadi. Yang paling suka itu format pesannya — pelanggan jadi lebih serius dan nggak asal chat.',
+              },
+              {
+                avatar: '👨',
+                name: 'Reza Pratama',
+                role: 'Toko Snack Online, Surabaya',
+                quote: 'Sebelumnya sering banget lupa catat order. Sekarang semua masuk otomatis via WA dengan format lengkap. Nggak ada yang kelewat lagi deh.',
+              },
+            ].map((t, i) => (
+              <div key={i} className="bg-white border border-green-100 rounded-[28px] p-6 hover:shadow-[0_8px_24px_rgba(22,163,74,.12)] hover:border-green-200 transition-all duration-300">
+                <div className="mb-5">
+                  <div className="text-3xl text-green-200 font-display leading-none mb-2">❝</div>
+                  <p className="text-sm text-body leading-relaxed italic" style={{ fontFamily: 'Instrument Serif, serif' }}>{t.quote}</p>
+                </div>
+                <div className="flex items-center gap-3 pt-4 border-t border-green-100">
+                  <div className="w-10 h-10 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-xl flex-shrink-0">
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-dark">{t.name}</div>
+                    <div className="text-xs text-muted">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6: CTA */}
       <section className="py-20 md:py-28 lg:py-32 bg-cream">
         <div className="container-app">
           <div className="cta-box">

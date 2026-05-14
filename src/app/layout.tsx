@@ -3,9 +3,13 @@ import './globals.css'
 import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
-  title: 'Niraga — Toko Online & Bot AI untuk UMKM',
-  description: 'Setup toko online dalam 5 menit. Bot AI jawab pelanggan otomatis, catat order, dan rekap harian — gratis.',
-  keywords: 'toko online, UMKM, bot AI, katalog produk, order otomatis',
+  title: 'Niraga — Katalog WA rapi dalam 2 menit',
+  description: 'Buat link toko online, tambah produk, dan pelanggan langsung order via WhatsApp dengan format rapi. Gratis, tanpa daftar dulu.',
+  keywords: 'katalog online, jualan WA, toko online gratis, UMKM, seller Indonesia',
+  openGraph: {
+    title: 'Niraga — Katalog WA rapi dalam 2 menit',
+    description: 'Buat link toko online, tambah produk, dan pelanggan langsung order via WhatsApp dengan format rapi. Gratis, tanpa daftar dulu.',
+  },
 }
 
 export default function RootLayout({

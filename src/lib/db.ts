@@ -22,6 +22,7 @@ export async function createStore(store: {
   description?: string
   logo_emoji?: string
   whatsapp?: string
+  shipping_info?: string
 }) {
   const supabase = createSupabaseClient()
   return supabase.from('stores').insert(store).select().single()
@@ -32,6 +33,7 @@ export async function updateStore(id: string, updates: Partial<{
   description: string
   logo_emoji: string
   whatsapp: string
+  shipping_info: string
   status: 'active' | 'inactive'
 }>) {
   const supabase = createSupabaseClient()

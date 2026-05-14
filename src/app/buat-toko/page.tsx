@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatRupiah } from '@/lib/utils'
 import { useAuth } from '@/lib/store'
+import { createSupabaseClient } from '@/lib/supabase-client'
 import { createStore, createProduct } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 
@@ -22,7 +23,7 @@ export default function BuatTokoPage() {
   const router = useRouter()
   const { user, initialized } = useAuth()
   const [step, setStep] = useState(0)
-  const [store, setStore] = useState({ name: '', wa: '', desc: '' })
+  const [store, setStore] = useState({ name: '', username: '', wa: '', desc: '', shippingInfo: '' })
   const [products, setProducts] = useState<Product[]>([
     { id: 1, emoji: '🥟', name: 'Siomay Frozen Ayam', price: '45000', unit: 'isi 20 pcs', imageBase64: '', imageUrl: '' },
   ])
@@ -30,6 +31,8 @@ export default function BuatTokoPage() {
   const [newProd, setNewProd] = useState({ emoji: '', name: '', price: '', unit: '', imageBase64: '' })
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short'>('idle')
+  const manualUsername = useRef(false)
 
   // Restore wizard data after login/register redirect
   useEffect(() => {
@@ -37,7 +40,11 @@ export default function BuatTokoPage() {
       try {
         const savedStore = sessionStorage.getItem('niraga_wizard_store')
         const savedProducts = sessionStorage.getItem('niraga_wizard_products')
-        if (savedStore) setStore(JSON.parse(savedStore))
+        if (savedStore) {
+          const parsed = JSON.parse(savedStore)
+          setStore(parsed)
+          if (parsed.username) manualUsername.current = true
+        }
         if (savedProducts) setProducts(JSON.parse(savedProducts))
       } catch {}
     }
@@ -47,6 +54,35 @@ export default function BuatTokoPage() {
     sessionStorage.setItem('niraga_wizard_store', JSON.stringify(store))
     sessionStorage.setItem('niraga_wizard_products', JSON.stringify(products))
   }
+
+  // Auto-slugify username from store name
+  useEffect(() => {
+    if (!manualUsername.current) {
+      const slug = store.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      setStore(prev => ({ ...prev, username: slug }))
+    }
+  }, [store.name])
+
+  // Debounce username availability check
+  useEffect(() => {
+    if (!store.username || store.username.length < 3) {
+      setUsernameStatus(store.username.length > 0 && store.username.length < 3 ? 'too-short' : 'idle')
+      return
+    }
+
+    const timer = setTimeout(async () => {
+      setUsernameStatus('checking')
+      try {
+        const supabase = createSupabaseClient()
+        const { data } = await supabase.rpc('check_username_available', { uname: store.username })
+        setUsernameStatus(data ? 'available' : 'taken')
+      } catch {
+        setUsernameStatus('available')
+      }
+    }, 600)
+
+    return () => clearTimeout(timer)
+  }, [store.username])
 
   const steps = ['Info Toko', 'Produk', 'Preview & Link']
   const fileInputRef = { current: null as any }
@@ -85,7 +121,7 @@ export default function BuatTokoPage() {
     reader.readAsDataURL(file)
   }
 
-  const slug = store.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'toko'
+  const slug = store.username || 'toko'
   const storeUrl = `niraga.id/${slug}`
 
   const handleCreateStore = async () => {
@@ -108,6 +144,7 @@ export default function BuatTokoPage() {
         slug,
         whatsapp: store.wa || undefined,
         description: store.desc || undefined,
+        shipping_info: store.shippingInfo || undefined,
       })
 
       if (error || !newStore) {
@@ -136,6 +173,29 @@ export default function BuatTokoPage() {
       setSaving(false)
     }
   }
+
+  const usernameFieldClass = (base: string) => {
+    if (usernameStatus === 'available') return `${base} border-green-500 bg-green-50`
+    if (usernameStatus === 'taken') return `${base} border-red-400 bg-red-50`
+    return base
+  }
+
+  const usernameStatusIcon = () => {
+    if (usernameStatus === 'checking') return <div className="w-3.5 h-3.5 border-2 border-muted border-t-transparent rounded-full animate-spin" />
+    if (usernameStatus === 'available') return <Icon.Check size={14} className="text-green-600" />
+    if (usernameStatus === 'taken') return <Icon.X size={14} className="text-red-500" />
+    return null
+  }
+
+  const usernameStatusText = () => {
+    if (usernameStatus === 'checking') return <span className="text-xs text-muted">Mengecek...</span>
+    if (usernameStatus === 'available') return <span className="text-xs text-green-600">Tersedia!</span>
+    if (usernameStatus === 'taken') return <span className="text-xs text-red-500">Sudah dipakai, coba yang lain</span>
+    if (usernameStatus === 'too-short') return <span className="text-xs text-muted">Minimal 3 karakter</span>
+    return null
+  }
+
+  const canContinue = store.name && store.wa && store.username && usernameStatus === 'available'
 
   return (
     <div className="min-h-screen bg-cream pt-16">
@@ -189,6 +249,30 @@ export default function BuatTokoPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Link Toko *</label>
+                <div className="flex items-stretch">
+                  <div className="flex items-center px-3.5 bg-gray-50 border border-r-0 border-gray-200 rounded-l-xl text-sm text-muted font-medium">niraga.id/</div>
+                  <input
+                    type="text"
+                    maxLength={30}
+                    value={store.username}
+                    onChange={e => {
+                      const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '')
+                      manualUsername.current = true
+                      setStore({ ...store, username: val })
+                    }}
+                    className={`flex-1 px-4 py-3 text-sm focus:outline-none focus:ring-2 transition-all ${usernameFieldClass('border rounded-r-xl bg-cream border-gray-200 focus:border-green-500 focus:ring-green-500/20')}`}
+                    placeholder="nama-toko"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 mt-1.5 min-h-5">
+                  {usernameStatusIcon()}
+                  {usernameStatusText()}
+                  {usernameStatus === 'idle' && <span className="text-xs text-muted">Ini akan jadi link permanenmu.</span>}
+                </div>
+              </div>
+
+              <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Nomor WhatsApp *</label>
                 <input
                   type="text"
@@ -209,11 +293,23 @@ export default function BuatTokoPage() {
                   placeholder="cth: Frozen food homemade, bebas pengawet, dikirim setiap hari..."
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Info Pengiriman <span className="text-gray-500 font-normal">(opsional)</span></label>
+                <input
+                  type="text"
+                  value={store.shippingInfo}
+                  onChange={e => setStore({ ...store, shippingInfo: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
+                  placeholder="cth: Min. order Rp 50rb · COD area Depok · Order sebelum jam 3"
+                />
+                <div className="text-[11px] text-gray-500 mt-1.5">Ditampilkan di halaman toko untuk ngurangin pertanyaan pelanggan.</div>
+              </div>
             </div>
 
             <button
               onClick={() => setStep(1)}
-              disabled={!store.name || !store.wa}
+              disabled={!canContinue}
               className="w-full mt-6 bg-green-600 hover:bg-green-700 disabled:bg-gray-200 disabled:text-gray-500 text-white font-bold py-3.5 rounded-2xl transition-all duration-200 shadow-green disabled:shadow-none"
             >
               Lanjut — Tambah Produk →

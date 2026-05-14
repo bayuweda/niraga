@@ -90,7 +90,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   return (
     <div className="min-h-screen bg-gray-100 pt-16">
-      <div className="max-w-[440px] mx-auto pb-[100px]">
+      <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-4">
           <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
@@ -128,6 +128,16 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
             </div>
           </div>
         </div>
+
+        {/* SHIPPING INFO */}
+        {store.shipping_info && (
+          <div className="px-3.5 mb-4">
+            <div className="flex items-start gap-2.5 bg-warm border border-border rounded-xl px-3.5 py-3">
+              <div className="flex-shrink-0 mt-0.5"><Icon.Truck size={14} className="text-muted" /></div>
+              <div className="text-[11px] text-body leading-relaxed">{store.shipping_info}</div>
+            </div>
+          </div>
+        )}
 
         {/* PRODUCTS SECTION */}
         <div className="px-3.5 mb-5">

@@ -6,6 +6,7 @@ export interface Store {
   description: string | null
   logo_emoji: string
   whatsapp: string | null
+  shipping_info: string | null
   status: 'active' | 'inactive'
   created_at: string
 }
