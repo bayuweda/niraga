@@ -99,8 +99,13 @@ export default function BuatTokoPage() {
     setProducts(p => p.filter(x => x.id !== id))
   }
 
-  const handleCopy = () => {
-    setCopied(true)
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(storeUrl)
+      setCopied(true)
+    } catch {
+      setCopied(true)
+    }
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -123,7 +128,7 @@ export default function BuatTokoPage() {
   }
 
   const slug = store.username || 'toko'
-  const storeUrl = `niraga.vercel.app/${slug}`
+  const storeUrl = typeof window !== 'undefined' ? `${window.location.origin}/${slug}` : `${slug}`
 
   const handleCreateStore = async () => {
     if (!initialized) {
