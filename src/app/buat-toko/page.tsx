@@ -239,7 +239,7 @@ export default function BuatTokoPage() {
       <div className="max-w-[560px] mx-auto px-4 pb-[60px]">
         {/* STEP 0: INFO TOKO */}
         {step === 0 && (
-          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+          <div className="bg-white border border-gray-200 rounded-3xl p-5 md:p-8 shadow-card-sm">
             <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight flex items-center gap-2"><Icon.Store size={22} /> Info Toko kamu</div>
             <div className="text-sm text-gray-500 mb-7 leading-relaxed">Info ini yang pelanggan lihat di halaman tokomu.</div>
 
@@ -326,7 +326,7 @@ export default function BuatTokoPage() {
 
         {/* STEP 1: PRODUK */}
         {step === 1 && (
-          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+          <div className="bg-white border border-gray-200 rounded-3xl p-5 md:p-8 shadow-card-sm">
             <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight flex items-center gap-2"><Icon.Package size={22} /> Produk kamu</div>
             <div className="text-sm text-gray-500 mb-7 leading-relaxed">Tambah produk yang mau kamu jual. Bisa diedit kapanpun.</div>
 
@@ -349,7 +349,7 @@ export default function BuatTokoPage() {
               </button>
             ) : (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-3">
-                <div className="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2.5">
                   <input
                     type="text"
                     value={newProd.name}
@@ -403,7 +403,7 @@ export default function BuatTokoPage() {
 
         {/* STEP 2: PREVIEW */}
         {step === 2 && (
-          <div className="bg-white border border-gray-200 rounded-3xl p-8 shadow-card-sm">
+          <div className="bg-white border border-gray-200 rounded-3xl p-5 md:p-8 shadow-card-sm">
             <div className="text-xl font-bold text-gray-900 mb-1.5 tracking-tight flex items-center gap-2"><Icon.Sparkles size={22} className="text-green-500" /> Toko kamu siap!</div>
             <div className="text-sm text-gray-500 mb-6 leading-relaxed">Ini tampilan toko kamu. Salin link di bawah dan share ke pelanggan.</div>
 
@@ -427,28 +427,31 @@ export default function BuatTokoPage() {
             </div>
 
             {/* Link Box */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-2.5 mb-3">
-              <div className="flex-1 text-sm font-bold text-green-600 break-all">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 mb-3">
+              <div className="text-xs sm:text-sm font-bold text-green-600 break-all w-full sm:flex-1">
                 {storeUrl}
               </div>
-              <button onClick={handleCopy} className="flex-shrink-0 py-2 px-4 bg-green-600 text-white rounded-lg font-bold text-xs hover:bg-green-700 transition-colors">
+              <button onClick={handleCopy} className="w-full sm:w-auto py-2.5 sm:py-2 px-4 bg-green-600 text-white rounded-lg font-bold text-xs hover:bg-green-700 transition-colors text-center">
                 {copied ? <span className="inline-flex items-center gap-1"><Icon.Check size={14} /> Disalin!</span> : 'Salin'}
               </button>
             </div>
 
             {/* Save Banner */}
-            <div className="bg-white border border-amber-400 rounded-xl p-3.5 flex items-center gap-3">
-              <div className="flex-shrink-0"><Icon.Save size={24} className="text-amber-500" /></div>
-              <div className="flex-1">
-                <div className="text-sm font-bold text-gray-900 mb-0.5">Simpan toko kamu</div>
-                <div className="text-[11px] text-gray-500">
-                  {user ? 'Tinggal klik simpan, toko langsung aktif!' : 'Buat akun gratis biar toko bisa diedit kapanpun.'}
+            <div className="bg-white border border-amber-400 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="hidden sm:block flex-shrink-0"><Icon.Save size={24} className="text-amber-500" /></div>
+              <div className="flex items-start gap-3 sm:gap-0 w-full sm:w-auto">
+                <div className="sm:hidden flex-shrink-0"><Icon.Save size={20} className="text-amber-500" /></div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-gray-900 mb-0.5">Simpan toko kamu</div>
+                  <div className="text-[11px] text-gray-500">
+                    {user ? 'Tinggal klik simpan, toko langsung aktif!' : 'Buat akun gratis biar toko bisa diedit kapanpun.'}
+                  </div>
                 </div>
               </div>
               <button
                 onClick={handleCreateStore}
                 disabled={saving}
-                className="flex-shrink-0 py-2 px-4 bg-amber-500 text-white rounded-lg font-bold text-xs hover:bg-amber-600 transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto py-2.5 sm:py-2 px-4 bg-amber-500 text-white rounded-lg font-bold text-xs hover:bg-amber-600 transition-colors disabled:opacity-50 text-center"
               >
                 {saving ? 'Menyimpan...' : 'Simpan Gratis'}
               </button>
