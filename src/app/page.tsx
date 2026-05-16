@@ -68,7 +68,9 @@ export default function Home() {
 
               {/* RIGHT - Phone Mockup */}
               <div className="flex justify-center items-center relative">
-                <div className="phone-mock !w-[220px] lg:!w-[260px]">
+                <div className="phone-frame w-[252px] lg:w-[296px]">
+                <div className="phone-notch" />
+                <div className="phone-mock w-full">
                   <div className="phone-bar">
                     <div className="phone-store-info">
                       <div className="phone-av"><Icon.Store size={18} className="text-white" /></div>
@@ -100,6 +102,7 @@ export default function Home() {
                     </div>
                     <div className="phone-cart-btn">Pesan via WA</div>
                   </div>
+                </div>
                 </div>
 
                 {/* WA Float */}
