@@ -108,6 +108,9 @@ do $$ begin
   if not exists (select 1 from pg_policies where policyname = 'Store owners can manage orders') then
     create policy "Store owners can manage orders" on public.orders for all using ((select user_id from stores where id = store_id) = auth.uid());
   end if;
+  if not exists (select 1 from pg_policies where policyname = 'Anyone can create orders') then
+    create policy "Anyone can create orders" on public.orders for insert with check (true);
+  end if;
   if not exists (select 1 from pg_policies where policyname = 'Store owners can manage bot settings') then
     create policy "Store owners can manage bot settings" on public.bot_settings for all using ((select user_id from stores where id = store_id) = auth.uid());
   end if;

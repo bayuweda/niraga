@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from 'react'
 import { formatRupiah } from '@/lib/utils'
-import { getStoreBySlug, getProductsByStoreId } from '@/lib/db'
+import { getStoreBySlug, getProductsByStoreId, createOrder } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 import type { Store, Product } from '@/lib/types'
 
@@ -12,6 +12,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState<{ [key: string]: number }>({})
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -58,10 +59,20 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const total = cartItems.reduce((s, p) => s + p.price * cart[p.id], 0)
   const totalQty = Object.values(cart).reduce((s, v) => s + v, 0)
 
-  const orderWA = () => {
+  const orderWA = async () => {
     if (!store) return
     const wa = store.whatsapp?.replace(/[^0-9]/g, '') || ''
     if (!wa) { alert('Nomor WhatsApp belum diatur'); return }
+    setSending(true)
+
+    await createOrder({
+      store_id: store.id,
+      items: cartItems.map(p => ({ product_id: p.id, name: p.name, qty: cart[p.id], price: p.price })),
+      total,
+    })
+
+    setSending(false)
+
     const lines = cartItems.map(p => `• ${p.name} × ${cart[p.id]} — ${formatRupiah(p.price * cart[p.id])}`).join('\n')
     const msg = encodeURIComponent(`Halo ${store.name}! 👋\n\nSaya mau pesan:\n${lines}\n\nTotal: ${formatRupiah(total)}\n\nMohon konfirmasinya ya kak 🙏`)
     window.open(`https://wa.me/${wa}?text=${msg}`, '_blank')
@@ -203,8 +214,8 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               </div>
               <div className="text-lg font-bold text-green-600">{formatRupiah(total)}</div>
             </div>
-            <button onClick={orderWA} className="w-full py-3.5 bg-[#25d366] text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(37,211,102,.3)] hover:bg-green-500 hover:-translate-y-px transition-all">
-              <WhatsAppIcon size={20} /> Pesan via WhatsApp
+            <button onClick={orderWA} disabled={sending} className="w-full py-3.5 bg-[#25d366] text-white rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(37,211,102,.3)] hover:bg-green-500 hover:-translate-y-px transition-all disabled:opacity-60 disabled:cursor-not-allowed">
+              {sending ? 'Memproses...' : <><WhatsAppIcon size={20} /> Pesan via WhatsApp</>}
             </button>
           </>
         )}

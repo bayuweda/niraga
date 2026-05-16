@@ -96,13 +96,13 @@ export async function getOrdersByStoreId(storeId: string) {
 
 export async function createOrder(order: {
   store_id: string
-  customer_name: string
+  customer_name?: string
   customer_contact?: string
   items: { product_id: string; name: string; qty: number; price: number }[]
   total: number
 }) {
   const supabase = getSupabaseClient()
-  return supabase.from('orders').insert(order).select().single()
+  return supabase.from('orders').insert({ ...order, customer_name: order.customer_name || '' }).select().single()
 }
 
 export async function updateOrderStatus(id: string, status: 'new' | 'confirmed' | 'done' | 'cancelled') {
