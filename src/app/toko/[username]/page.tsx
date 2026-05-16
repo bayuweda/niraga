@@ -98,7 +98,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 pt-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-gray-400">Memuat...</div>
       </div>
     )
@@ -106,7 +106,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   if (!store) {
     return (
-      <div className="min-h-screen bg-gray-100 pt-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center max-w-sm px-4">
           <div className="mb-3"><Icon.Search size={48} className="text-gray-300 mx-auto" /></div>
           <div className="text-gray-900 font-bold text-lg mb-1">Toko tidak ditemukan</div>
@@ -118,7 +118,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-16">
+    <div className="min-h-screen bg-gray-100">
       <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-4">
