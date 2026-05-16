@@ -175,11 +175,16 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
         )}
 
         {/* PAYMENT INFO */}
-        {store.payment_info && (
+        {(store.payment_info || store.qris_url) && (
           <div className="px-3.5 mb-4">
             <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-3">
               <div className="text-[11px] font-bold text-gray-500 mb-2">💳 Pembayaran</div>
-              <div className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line">{store.payment_info}</div>
+              {store.payment_info && (
+                <div className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line mb-3">{store.payment_info}</div>
+              )}
+              {store.qris_url && (
+                <img src={store.qris_url} alt="QRIS" className="w-36 h-36 object-cover rounded-xl border border-gray-200" />
+              )}
             </div>
           </div>
         )}

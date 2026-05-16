@@ -16,3 +16,6 @@ alter table public.stores add column if not exists banner_url text;
 
 -- Migration: Add payment_info column to stores
 alter table public.stores add column if not exists payment_info text;
+
+-- Migration: Add qris_url column to stores
+alter table public.stores add column if not exists qris_url text;

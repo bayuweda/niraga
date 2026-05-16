@@ -15,8 +15,10 @@ export default function SettingsPage() {
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '' })
+  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '', qrisBase64: '' })
   const [bannerRemoved, setBannerRemoved] = useState(false)
+  const [qrisRemoved, setQrisRemoved] = useState(false)
+  const qrisInputRef = useRef<HTMLInputElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -28,8 +30,9 @@ export default function SettingsPage() {
       const { data } = await getStoreByUserId(user.id)
       if (data) {
         setStore(data)
-        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '' })
+        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '', qrisBase64: data.qris_url || '' })
         setBannerRemoved(false)
+        setQrisRemoved(false)
       }
       setLoading(false)
     }
@@ -39,17 +42,20 @@ export default function SettingsPage() {
   const handleSave = async () => {
     if (!store || !form.name) { toast.error('Nama toko wajib diisi'); return }
     const bannerUrl: string | null | undefined = bannerRemoved ? null : (form.bannerBase64 || undefined)
+    const qrisUrl: string | null | undefined = qrisRemoved ? null : (form.qrisBase64 || undefined)
     const { error } = await updateStore(store.id, {
       name: form.name,
       description: form.description || undefined,
       whatsapp: form.wa || undefined,
       shipping_info: form.shippingInfo || undefined,
       payment_info: form.paymentInfo || undefined,
+      qris_url: qrisUrl,
       banner_url: bannerUrl,
     })
     if (error) { toast.error('Gagal menyimpan'); return }
-    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, payment_info: form.paymentInfo, banner_url: form.bannerBase64 || null } : null)
+    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, payment_info: form.paymentInfo, qris_url: form.qrisBase64 || null, banner_url: form.bannerBase64 || null } : null)
     setBannerRemoved(false)
+    setQrisRemoved(false)
     toast.success('Pengaturan disimpan')
   }
 
@@ -144,6 +150,29 @@ export default function SettingsPage() {
                 <textarea value={form.paymentInfo} onChange={e => setForm({ ...form, paymentInfo: e.target.value })}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 resize-none min-h-20"
                   placeholder={"BCA: 1234567890 a.n. Siti Nurhaliza\nMandiri: 9876543210 a.n. Siti Nurhaliza"} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">QRIS <span className="text-gray-400 font-normal">(opsional)</span></label>
+                <input ref={qrisInputRef} type="file" accept="image/*" className="hidden" onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  if (file.size > 2 * 1024 * 1024) { toast.error('Maksimal 2MB'); return }
+                  const reader = new FileReader()
+                  reader.onload = () => { setForm({ ...form, qrisBase64: reader.result as string }); setQrisRemoved(false) }
+                  reader.readAsDataURL(file)
+                }} />
+                {form.qrisBase64 ? (
+                  <div className="relative inline-block">
+                    <img src={form.qrisBase64} alt="QRIS" className="w-32 h-32 object-cover rounded-xl border border-gray-200" />
+                    <button onClick={() => { setForm({ ...form, qrisBase64: '' }); setQrisRemoved(true) }}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] hover:bg-red-600">×</button>
+                  </div>
+                ) : (
+                  <button onClick={() => qrisInputRef.current?.click()}
+                    className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 hover:border-green-500 hover:text-green-600 transition-all text-sm gap-1.5">
+                    <Icon.Camera size={18} /> Upload
+                  </button>
+                )}
               </div>
               <button onClick={handleSave} className="btn-primary-sm">Simpan</button>
             </div>

@@ -8,6 +8,7 @@ export interface Store {
   whatsapp: string | null
   shipping_info: string | null
   payment_info: string | null
+  qris_url: string | null
   banner_url: string | null
   status: 'active' | 'inactive'
   created_at: string

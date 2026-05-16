@@ -21,6 +21,7 @@ create table if not exists public.stores (
   whatsapp text,
   shipping_info text,
   payment_info text,
+  qris_url text,
   banner_url text,
   status text default 'active' check (status in ('active', 'inactive')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
