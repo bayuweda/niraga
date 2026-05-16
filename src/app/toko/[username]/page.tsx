@@ -14,6 +14,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const [cart, setCart] = useState<{ [key: string]: number }>({})
   const [showForm, setShowForm] = useState(false)
   const [customerName, setCustomerName] = useState('')
+  const [customerWA, setCustomerWA] = useState('')
   const [customerNotes, setCustomerNotes] = useState('')
   const [sending, setSending] = useState(false)
 
@@ -64,6 +65,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   const openCheckout = () => {
     setCustomerName('')
+    setCustomerWA('')
     setCustomerNotes('')
     setShowForm(true)
   }
@@ -77,14 +79,16 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
     await createOrder({
       store_id: store.id,
       customer_name: customerName.trim(),
+      customer_contact: customerWA.trim() || undefined,
       notes: customerNotes.trim() || undefined,
       items: cartItems.map(p => ({ product_id: p.id, name: p.name, qty: cart[p.id], price: p.price })),
       total,
     })
 
     const lines = cartItems.map(p => `• ${p.name} × ${cart[p.id]} — ${formatRupiah(p.price * cart[p.id])}`).join('\n')
+    const waNote = customerWA.trim() ? `\nWA: ${customerWA.trim()}` : ''
     const notes = customerNotes.trim() ? `\n\nCatatan: ${customerNotes.trim()}` : ''
-    const msg = encodeURIComponent(`Halo ${store.name}! 👋\n\nSaya ${customerName.trim()} mau pesan:\n${lines}\n\nTotal: ${formatRupiah(total)}${notes}\n\nMohon konfirmasinya ya kak 🙏`)
+    const msg = encodeURIComponent(`Halo ${store.name}! 👋\n\nSaya ${customerName.trim()} mau pesan:\n${lines}\n\nTotal: ${formatRupiah(total)}${waNote}${notes}\n\nMohon konfirmasinya ya kak 🙏`)
 
     setSending(false)
     setShowForm(false)
@@ -252,6 +256,17 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   placeholder="cth: Siti Nurhaliza"
                 />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">No. WhatsApp <span className="text-gray-400 font-normal">(opsional)</span></label>
+                <input
+                  type="text"
+                  value={customerWA}
+                  onChange={e => setCustomerWA(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  placeholder="cth: 08123456789"
+                />
+                <div className="text-[11px] text-gray-400 mt-1">Supaya penjual bisa hubungi kamu balik</div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">Catatan <span className="text-gray-400 font-normal">(opsional)</span></label>

@@ -8,7 +8,7 @@ import Badge from '@/components/ui/Badge'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, getOrdersByStoreId, updateOrderStatus, deleteOrder } from '@/lib/db'
 import { formatRupiah } from '@/lib/utils'
-import { Icon } from '@/components/ui/Icons'
+import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 import type { Store, Order } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -148,7 +148,9 @@ export default function PesananPage() {
                     <div>
                       <div className="text-sm font-bold text-gray-900">{order.customer_name}</div>
                       {order.customer_contact && (
-                        <div className="text-xs text-gray-400">{order.customer_contact}</div>
+                        <a href={`https://wa.me/${order.customer_contact.replace(/[^0-9]/g, '')}`} target="_blank" className="text-xs text-green-600 font-semibold hover:underline inline-flex items-center gap-1">
+                          <WhatsAppIcon size={12} /> {order.customer_contact}
+                        </a>
                       )}
                     </div>
                   </div>
