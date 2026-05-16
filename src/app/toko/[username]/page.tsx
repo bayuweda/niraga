@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState, use, useRef } from 'react'
 import { formatRupiah } from '@/lib/utils'
 import { getStoreBySlug, getProductsByStoreId, createOrder } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
@@ -21,6 +21,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const [customerWA, setCustomerWA] = useState('')
   const [customerNotes, setCustomerNotes] = useState('')
   const [sending, setSending] = useState(false)
+  const touchStartX = useRef(0)
 
   useEffect(() => {
     async function load() {
@@ -250,7 +251,15 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
             {(() => {
               const images = getProductImages(selectedProd)
               return images.length > 0 ? (
-                <div className="relative bg-gray-100">
+                <div className="relative bg-gray-100"
+                  onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
+                  onTouchEnd={e => {
+                    const diff = e.changedTouches[0].clientX - touchStartX.current
+                    if (Math.abs(diff) > 50) {
+                      if (diff < 0) setDetailImgIdx(i => Math.min(images.length - 1, i + 1))
+                      else setDetailImgIdx(i => Math.max(0, i - 1))
+                    }
+                  }}>
                   <img src={images[detailImgIdx]} alt={selectedProd.name} className="w-full aspect-square object-cover" />
                   {images.length > 1 && (
                     <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
