@@ -13,3 +13,6 @@ alter table public.orders add column if not exists notes text;
 
 -- Migration: Add banner_url column to stores
 alter table public.stores add column if not exists banner_url text;
+
+-- Migration: Add payment_info column to stores
+alter table public.stores add column if not exists payment_info text;

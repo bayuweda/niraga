@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', bannerBase64: '' })
+  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '' })
   const [bannerRemoved, setBannerRemoved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -28,7 +28,7 @@ export default function SettingsPage() {
       const { data } = await getStoreByUserId(user.id)
       if (data) {
         setStore(data)
-        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', bannerBase64: data.banner_url || '' })
+        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '' })
         setBannerRemoved(false)
       }
       setLoading(false)
@@ -44,10 +44,11 @@ export default function SettingsPage() {
       description: form.description || undefined,
       whatsapp: form.wa || undefined,
       shipping_info: form.shippingInfo || undefined,
+      payment_info: form.paymentInfo || undefined,
       banner_url: bannerUrl,
     })
     if (error) { toast.error('Gagal menyimpan'); return }
-    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, banner_url: form.bannerBase64 || null } : null)
+    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, payment_info: form.paymentInfo, banner_url: form.bannerBase64 || null } : null)
     setBannerRemoved(false)
     toast.success('Pengaturan disimpan')
   }
@@ -137,6 +138,12 @@ export default function SettingsPage() {
                 <input value={form.shippingInfo} onChange={e => setForm({ ...form, shippingInfo: e.target.value })}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   placeholder="Min. order Rp 50rb · COD area Depok" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Pembayaran <span className="text-gray-400 font-normal">(opsional)</span></label>
+                <textarea value={form.paymentInfo} onChange={e => setForm({ ...form, paymentInfo: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 resize-none min-h-20"
+                  placeholder={"BCA: 1234567890 a.n. Siti Nurhaliza\nMandiri: 9876543210 a.n. Siti Nurhaliza"} />
               </div>
               <button onClick={handleSave} className="btn-primary-sm">Simpan</button>
             </div>

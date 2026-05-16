@@ -34,6 +34,7 @@ export async function updateStore(id: string, updates: Partial<{
   logo_emoji: string
   whatsapp: string
   shipping_info: string
+  payment_info: string
   banner_url: string | null
   status: 'active' | 'inactive'
 }>) {

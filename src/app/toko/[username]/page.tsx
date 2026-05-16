@@ -174,6 +174,16 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
           </div>
         )}
 
+        {/* PAYMENT INFO */}
+        {store.payment_info && (
+          <div className="px-3.5 mb-4">
+            <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-3">
+              <div className="text-[11px] font-bold text-gray-500 mb-2">💳 Pembayaran</div>
+              <div className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line">{store.payment_info}</div>
+            </div>
+          </div>
+        )}
+
         {/* PRODUCTS SECTION */}
         <div className="px-3.5 mb-5">
           <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2.5 px-0.5">
