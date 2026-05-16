@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-type BadgeVariant = 'new' | 'confirmed' | 'done' | 'tag'
+type BadgeVariant = 'new' | 'confirmed' | 'done' | 'cancelled' | 'tag'
 
 interface BadgeProps {
   variant: BadgeVariant
@@ -12,6 +12,7 @@ const variantStyles: Record<BadgeVariant, string> = {
   new: 'bg-orange-50 text-orange-700 border border-orange-200',
   confirmed: 'bg-green-50 text-green-700 border border-green-200',
   done: 'bg-gray-100 text-gray-500 border border-gray-200',
+  cancelled: 'bg-red-50 text-red-600 border border-red-200',
   tag: 'tag-badge',
 }
 

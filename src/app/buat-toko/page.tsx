@@ -31,7 +31,7 @@ export default function BuatTokoPage() {
   const [newProd, setNewProd] = useState({ emoji: '', name: '', price: '', unit: '', imageBase64: '' })
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short'>('idle')
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short' | 'error'>('idle')
   const manualUsername = useRef(false)
 
   // Initialize auth + restore wizard data after login/register redirect
@@ -78,7 +78,7 @@ export default function BuatTokoPage() {
         const { data } = await supabase.rpc('check_username_available', { uname: store.username })
         setUsernameStatus(data ? 'available' : 'taken')
       } catch {
-        setUsernameStatus('available')
+        setUsernameStatus('error')
       }
     }, 600)
 
@@ -128,7 +128,7 @@ export default function BuatTokoPage() {
   }
 
   const slug = store.username || 'toko'
-  const storeUrl = typeof window !== 'undefined' ? `${window.location.origin}/${slug}` : `${slug}`
+  const storeUrl = typeof window !== 'undefined' ? `${window.location.origin}/toko/${slug}` : `/toko/${slug}`
 
   const handleCreateStore = async () => {
     if (!initialized) {
@@ -167,6 +167,7 @@ export default function BuatTokoPage() {
           price: parseInt(p.price),
           unit: p.unit,
           emoji: p.emoji || '📦',
+          image_url: p.imageBase64 || undefined,
         })
         if (prodErr) console.error('Gagal simpan produk:', prodErr)
       }
@@ -183,14 +184,14 @@ export default function BuatTokoPage() {
 
   const usernameFieldClass = (base: string) => {
     if (usernameStatus === 'available') return `${base} border-green-500 bg-green-50`
-    if (usernameStatus === 'taken') return `${base} border-red-400 bg-red-50`
+    if (usernameStatus === 'taken' || usernameStatus === 'error') return `${base} border-red-400 bg-red-50`
     return base
   }
 
   const usernameStatusIcon = () => {
     if (usernameStatus === 'checking') return <div className="w-3.5 h-3.5 border-2 border-muted border-t-transparent rounded-full animate-spin" />
     if (usernameStatus === 'available') return <Icon.Check size={14} className="text-green-600" />
-    if (usernameStatus === 'taken') return <Icon.X size={14} className="text-red-500" />
+    if (usernameStatus === 'taken' || usernameStatus === 'error') return <Icon.X size={14} className="text-red-500" />
     return null
   }
 
@@ -199,6 +200,7 @@ export default function BuatTokoPage() {
     if (usernameStatus === 'available') return <span className="text-xs text-green-600">Tersedia!</span>
     if (usernameStatus === 'taken') return <span className="text-xs text-red-500">Sudah dipakai, coba yang lain</span>
     if (usernameStatus === 'too-short') return <span className="text-xs text-muted">Minimal 3 karakter</span>
+    if (usernameStatus === 'error') return <span className="text-xs text-red-500">Gagal mengecek, refresh halaman</span>
     return null
   }
 
@@ -258,7 +260,7 @@ export default function BuatTokoPage() {
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Link Toko *</label>
                 <div className="flex flex-col gap-1.5">
-                  <div className="text-xs text-muted font-medium px-1 break-all">niraga.vercel.app/</div>
+                  <div className="text-xs text-muted font-medium px-1 break-all">niraga.vercel.app/toko/</div>
                   <input
                     type="text"
                     maxLength={30}

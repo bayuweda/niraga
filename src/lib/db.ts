@@ -47,9 +47,11 @@ export async function deleteStore(id: string) {
 
 // --- PRODUCTS ---
 
-export async function getProductsByStoreId(storeId: string) {
+export async function getProductsByStoreId(storeId: string, includeInactive = false) {
   const supabase = getSupabaseClient()
-  return supabase.from('products').select('*').eq('store_id', storeId).eq('is_active', true).order('created_at')
+  let query = supabase.from('products').select('*').eq('store_id', storeId).order('created_at')
+  if (!includeInactive) query = query.eq('is_active', true)
+  return query
 }
 
 export async function createProduct(product: {

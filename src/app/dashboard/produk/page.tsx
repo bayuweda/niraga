@@ -31,7 +31,7 @@ export default function ProdukPage() {
       const { data: storeData } = await getStoreByUserId(user.id)
       if (!storeData) { setLoading(false); return }
       setStore(storeData)
-      const { data: productsData } = await getProductsByStoreId(storeData.id)
+      const { data: productsData } = await getProductsByStoreId(storeData.id, true)
       if (productsData) setProducts(productsData)
       setLoading(false)
     }
