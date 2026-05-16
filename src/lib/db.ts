@@ -111,6 +111,11 @@ export async function updateOrderStatus(id: string, status: 'new' | 'confirmed' 
   return supabase.from('orders').update({ status }).eq('id', id).select().single()
 }
 
+export async function deleteOrder(id: string) {
+  const supabase = getSupabaseClient()
+  return supabase.from('orders').delete().eq('id', id)
+}
+
 // --- DASHBOARD METRICS ---
 
 export async function getDashboardMetrics(storeId: string) {

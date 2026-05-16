@@ -6,7 +6,7 @@ import DashboardSidebar from '@/components/dashboard/Sidebar'
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import Badge from '@/components/ui/Badge'
 import { useAuth } from '@/lib/store'
-import { getStoreByUserId, getOrdersByStoreId, updateOrderStatus } from '@/lib/db'
+import { getStoreByUserId, getOrdersByStoreId, updateOrderStatus, deleteOrder } from '@/lib/db'
 import { formatRupiah } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icons'
 import type { Store, Order } from '@/lib/types'
@@ -61,6 +61,14 @@ export default function PesananPage() {
     if (error) { toast.error('Gagal update status'); return }
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
     toast.success(`Pesanan ${statusLabel[status].toLowerCase()}`)
+  }
+
+  const handleDelete = async (orderId: string) => {
+    if (!confirm('Hapus pesanan ini?')) return
+    const { error } = await deleteOrder(orderId)
+    if (error) { toast.error('Gagal hapus pesanan'); return }
+    setOrders(prev => prev.filter(o => o.id !== orderId))
+    toast.success('Pesanan dihapus')
   }
 
   const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter)
@@ -173,6 +181,12 @@ export default function PesananPage() {
                 <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between flex-wrap gap-2">
                   <div className="text-[11px] text-gray-400">{new Date(order.created_at).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div>
                   <div className="flex gap-1.5">
+                    {order.status === 'new' && (
+                      <button onClick={() => handleDelete(order.id)}
+                        className="text-xs font-bold px-3 py-1.5 rounded-xl text-red-500 border border-red-200 hover:bg-red-50 transition-all">
+                        Hapus
+                      </button>
+                    )}
                     {statusNext[order.status]?.map(action => (
                       <button
                         key={action.status}
