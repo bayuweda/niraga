@@ -186,11 +186,17 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
                 onClick={() => toggleProduct(p.id)}
                 className={`bg-white border-2 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 relative ${cart[p.id] ? 'border-green-500 shadow-[0_0_0_3px_rgba(22,163,74,.12)]' : 'border-gray-200 hover:border-green-200 hover:shadow-[0_6px_20px_rgba(22,163,74,.1)] hover:-translate-y-0.5'}`}
               >
-                <div className="w-full aspect-square relative overflow-hidden" style={{ background: p.bg_color }}>
-                  <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Icon.Package size={56} className="text-white/80" />
-                  </div>
+                <div className="w-full aspect-square relative overflow-hidden" style={{ background: p.image_url ? '#f3f4f6' : p.bg_color }}>
+                  {p.image_url ? (
+                    <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Icon.Package size={56} className="text-white/80" />
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className={`absolute top-2 right-2 w-[22px] h-[22px] rounded-full bg-green-600 text-white flex items-center justify-center transition-all duration-200 ${cart[p.id] ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.6]'}`}>
