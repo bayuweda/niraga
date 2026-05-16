@@ -32,6 +32,7 @@ export interface Order {
   customer_contact: string | null
   items: OrderItem[]
   total: number
+  notes: string | null
   status: 'new' | 'confirmed' | 'done' | 'cancelled'
   created_at: string
 }

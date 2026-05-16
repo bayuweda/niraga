@@ -47,6 +47,7 @@ create table if not exists public.orders (
   customer_contact text,
   items jsonb not null, -- [{product_id, name, qty, price}]
   total integer not null,
+  notes text,
   status text default 'new' check (status in ('new', 'confirmed', 'done', 'cancelled')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

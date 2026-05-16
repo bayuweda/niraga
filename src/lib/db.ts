@@ -98,6 +98,7 @@ export async function createOrder(order: {
   store_id: string
   customer_name?: string
   customer_contact?: string
+  notes?: string
   items: { product_id: string; name: string; qty: number; price: number }[]
   total: number
 }) {

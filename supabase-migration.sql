@@ -7,3 +7,6 @@ do $$ begin
     create policy "Anyone can create orders" on public.orders for insert with check (true);
   end if;
 end $$;
+
+-- Migration: Add notes column to orders
+alter table public.orders add column if not exists notes text;

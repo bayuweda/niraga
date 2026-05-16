@@ -147,7 +147,7 @@ export default function PesananPage() {
                   <div className="text-right">
                     <div className="text-sm font-bold text-gray-900">{formatRupiah(order.total)}</div>
                     <div className="mt-1">
-                      <Badge variant={order.status as any}>{statusLabel[order.status]}</Badge>
+                      <Badge variant={order.status}>{statusLabel[order.status]}</Badge>
                     </div>
                   </div>
                 </div>
@@ -162,6 +162,12 @@ export default function PesananPage() {
                       </div>
                     ))}
                   </div>
+                  {order.notes && (
+                    <div className="mt-2 pt-2 border-t border-dashed border-gray-100">
+                      <span className="text-[11px] text-gray-500">Catatan: </span>
+                      <span className="text-xs text-gray-700">{order.notes}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between flex-wrap gap-2">
