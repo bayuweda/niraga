@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .wordmark { font-family: 'DM Sans', Arial, sans-serif; font-weight: 600; }
+      .wordmark-italic { font-family: 'Georgia', 'Times New Roman', serif; font-style: italic; font-weight: 400; }
+      .tagline { font-family: 'DM Sans', Arial, sans-serif; font-weight: 400; }
+    </style>
+  </defs>
+
+  <!-- Icon BG -->
+  <rect x="20" y="20" width="80" height="80" rx="22" fill="#16a34a"/>
+
+  <!-- Roof / atap toko -->
+  <path d="M35.6 56 L60 40 L84.4 56"
+    stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Badan toko -->
+  <rect x="42" y="56" width="36" height="25" rx="3.5"
+    stroke="white" stroke-width="4.5" fill="none"/>
+
+  <!-- Pintu -->
+  <rect x="51.5" y="63" width="17" height="18" rx="2.5" fill="white" opacity="0.92"/>
+
+  <!-- WA circle -->
+  <circle cx="80" cy="37" r="12" fill="white"/>
+
+  <!-- WA bubble icon -->
+  <path d="M80 30.5C76.4 30.5 73.5 33.4 73.5 37C73.5 38.2 73.85 39.3 74.45 40.2L73.5 43.5L76.9 42.55C77.8 43.1 78.85 43.5 80 43.5C83.6 43.5 86.5 40.6 86.5 37C86.5 33.4 83.6 30.5 80 30.5Z"
+    fill="#16a34a"/>
+
+  <!-- Wordmark: Nira -->
+  <text x="118" y="72"
+    class="wordmark"
+    font-size="44"
+    fill="#0f1a0f"
+    letter-spacing="-1.5">Nira</text>
+
+  <!-- Wordmark: ga (italic serif, green) -->
+  <text x="225" y="72"
+    class="wordmark-italic"
+    font-size="44"
+    fill="#16a34a"
+    letter-spacing="-1">ga</text>
+
+  <!-- Tagline -->
+  <text x="119" y="92"
+    class="tagline"
+    font-size="13"
+    fill="#7a9178"
+    letter-spacing="3">KATALOG WA</text>
+
+</svg>

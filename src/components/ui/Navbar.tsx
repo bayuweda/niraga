@@ -12,8 +12,8 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-4 md:px-14 bg-cream/90 backdrop-blur-md border-b border-border">
-      <Link href="/" className="font-display italic font-bold text-green-700 text-xl tracking-tight">
-        Niraga
+      <Link href="/">
+        <img src="/niraga-logo-full.svg" alt="Niraga" className="h-7" />
       </Link>
 
       <div className="flex items-center gap-3">

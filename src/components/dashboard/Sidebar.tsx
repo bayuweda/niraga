@@ -27,8 +27,8 @@ export default function DashboardSidebar({ currentPage }: { currentPage: string 
 
   return (
     <aside className="hidden lg:flex w-60 flex-shrink-0 bg-dark min-h-[calc(100vh-64px)] sticky top-16 self-start p-4 flex-col">
-      <div className="font-display italic font-bold text-green-400 text-lg px-2.5 pb-4 mb-1 border-b border-white/8">
-        Niraga
+      <div className="px-2.5 pb-4 mb-1 border-b border-white/8">
+        <img src="/niraga-logo-full.svg" alt="Niraga" className="h-6" />
       </div>
 
       {store && (
