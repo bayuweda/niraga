@@ -339,7 +339,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-gray-50 border-t border-gray-200 py-8">
         <div className="container-app flex justify-between items-center flex-wrap gap-4">
-          <img src="/niraga-logo-full.svg" alt="Niraga" className="h-7" />
+          <img src="/niraga-logo-full.svg" alt="Niraga" className="h-9" />
           <div className="text-xs text-gray-400">
             © 2025 Niraga. Dibuat dengan love untuk UMKM Indonesia.
           </div>

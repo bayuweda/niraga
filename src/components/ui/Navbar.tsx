@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-4 md:px-14 bg-cream/90 backdrop-blur-md border-b border-border">
       <Link href="/">
-        <img src="/niraga-logo-full.svg" alt="Niraga" className="h-8 md:h-7" />
+        <img src="/niraga-logo-full.svg" alt="Niraga" className="h-11 md:h-9" />
       </Link>
 
       <div className="flex items-center gap-3">
