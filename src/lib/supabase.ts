@@ -47,6 +47,10 @@ export const supabase = {
       const client = getSupabaseClient()
       return client.auth.signOut()
     },
+    signInWithOAuth: async (options: { provider: 'google'; options?: { redirectTo?: string } }) => {
+      const client = getSupabaseClient()
+      return client.auth.signInWithOAuth(options)
+    },
     onAuthStateChange: (callback: (event: string, session: any) => void) => {
       const client = getSupabaseClient()
       return client.auth.onAuthStateChange(callback)

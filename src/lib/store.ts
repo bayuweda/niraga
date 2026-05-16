@@ -15,6 +15,7 @@ interface AuthState {
   initialize: () => Promise<void>
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string) => Promise<{ error: any }>
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -96,6 +97,23 @@ export const useAuth = create<AuthState>((set) => ({
     })
     set({ loading: false })
     return { error }
+  },
+
+  signInWithGoogle: async () => {
+    set({ loading: true })
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      set({ loading: false })
+      return
+    }
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+    if (error) console.error('Google sign-in error:', error.message)
+    set({ loading: false })
   },
 
   signOut: async () => {
