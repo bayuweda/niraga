@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/store'
+import { Icon } from '@/components/ui/Icons'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -24,24 +25,13 @@ export default function Navbar() {
           Lihat Contoh
         </Link>
 
-        <Link
-          href="/buat-toko"
-          className="inline-flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-2xl border-none cursor-pointer font-sans text-xs font-bold shadow-green transition-all duration-200 hover:bg-green-700 hover:-translate-y-px"
-        >
-          Buat Toko Gratis
-        </Link>
-
         {initialized && user ? (
-          <>
-            <Link href="/dashboard"
-              className="text-xs text-muted hover:text-dark font-medium transition-colors">
-              Dashboard
-            </Link>
-            <button onClick={() => useAuth.getState().signOut()}
-              className="text-xs text-red-400 hover:text-red-600 font-medium transition-colors">
-              Keluar
-            </button>
-          </>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-2xl font-sans text-xs font-bold shadow-green transition-all duration-200 hover:bg-green-700 hover:-translate-y-px"
+          >
+            <Icon.Dashboard size={14} /> Dashboard
+          </Link>
         ) : (
           <Link
             href="/login"
