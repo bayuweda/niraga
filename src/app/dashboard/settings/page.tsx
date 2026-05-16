@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
+import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, updateStore, deleteStore } from '@/lib/db'
 import { Icon } from '@/components/ui/Icons'
@@ -74,7 +75,7 @@ export default function SettingsPage() {
     <div className="flex min-h-screen bg-gray-50 pt-16">
       <DashboardSidebar currentPage="Pengaturan" />
 
-      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0">
+      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0 pb-20 lg:pb-10">
         <div className="mb-7">
           <h1 className="font-display font-bold text-gray-900 tracking-tight text-2xl lg:text-3xl flex items-center gap-2.5"><Icon.Settings size={28} /> Pengaturan</h1>
           <div className="text-xs text-gray-400 mt-1">Atur informasi toko kamu</div>
@@ -142,6 +143,7 @@ export default function SettingsPage() {
           </div>
         </div>
       </main>
+      <MobileBottomNav />
     </div>
   )
 }

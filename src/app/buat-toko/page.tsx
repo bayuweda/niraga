@@ -212,7 +212,7 @@ export default function BuatTokoPage() {
           <div className="live-dot" />
           Gratis · Tanpa login dulu
         </div>
-        <h1 className="font-bold text-gray-900 text-[28px] md:text-[46px] tracking-[-1.5px] mb-2.5" style={{ fontFamily: 'Instrument Serif, serif' }}>
+        <h1 className="font-display font-bold text-gray-900 text-[28px] md:text-[46px] tracking-[-1.5px] mb-2.5">
           Buat Toko Kamu
         </h1>
         <p className="text-base text-gray-600">Isi info di bawah — toko siap dalam 2 menit.</p>

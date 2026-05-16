@@ -107,7 +107,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
           </div>
 
           <div className="text-center px-5 pt-3 pb-5">
-            <div className="font-bold text-[22px] text-gray-900 mb-1 tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
+            <div className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">
               {store.name}
             </div>
             {store.description && (

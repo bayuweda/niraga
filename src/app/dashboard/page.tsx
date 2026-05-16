@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import MetricCard from '@/components/ui/MetricCard'
 import Badge from '@/components/ui/Badge'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
+import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, getOrdersByStoreId, getDashboardMetrics } from '@/lib/db'
 import { formatRupiah } from '@/lib/utils'
@@ -98,7 +99,7 @@ export default function DashboardPage() {
       <DashboardSidebar currentPage="Dashboard" />
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0">
+      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0 pb-20 lg:pb-10">
         <div className="flex items-start justify-between gap-4 mb-7 flex-wrap">
           <div>
             <h1 className="font-display font-bold text-gray-900 tracking-tight text-2xl lg:text-3xl">
@@ -209,6 +210,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+      <MobileBottomNav />
     </div>
   )
 }

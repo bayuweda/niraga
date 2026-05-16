@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
+import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, getProductsByStoreId, createProduct, updateProduct, deleteProduct } from '@/lib/db'
 import { formatRupiah } from '@/lib/utils'
@@ -112,7 +113,7 @@ export default function ProdukPage() {
     <div className="flex min-h-screen bg-gray-50 pt-16">
       <DashboardSidebar currentPage="Produk" />
 
-      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0">
+      <main className="flex-1 px-4 py-5 sm:p-6 lg:p-10 min-w-0 pb-20 lg:pb-10">
         <div className="flex items-center justify-between gap-4 mb-7 flex-wrap">
           <div>
             <h1 className="font-display font-bold text-gray-900 tracking-tight text-2xl lg:text-3xl flex items-center gap-2.5"><Icon.Package size={28} /> Produk</h1>
@@ -283,6 +284,7 @@ export default function ProdukPage() {
           </>
         )}
       </main>
+      <MobileBottomNav />
     </div>
   )
 }

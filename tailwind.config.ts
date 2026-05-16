@@ -40,8 +40,8 @@ const config: Config = {
         border: '#e2ede2',
       },
       fontFamily: {
-        display: ['var(--font-instrument)', 'serif'],
-        sans: ['var(--font-poppins)', 'sans-serif'],
+        display: ['var(--font-poppins)', 'sans-serif'],
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Noto Sans"', 'sans-serif'],
       },
       boxShadow: {
         'green': '0 8px 32px rgba(22,163,74,.22)',

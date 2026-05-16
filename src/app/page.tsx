@@ -27,7 +27,7 @@ export default function Home() {
                   Gratis · Tanpa daftar dulu
                 </div>
 
-                <h1 className="font-bold leading-[1.06] tracking-[-1.5px] text-gray-900 mb-5 text-[40px] md:text-5xl lg:text-7xl" style={{ fontFamily: 'Instrument Serif, serif' }}>
+                <h1 className="font-display font-bold leading-[1.06] tracking-[-1.5px] text-gray-900 mb-5 text-[40px] md:text-5xl lg:text-7xl">
                   Katalog WA-mu<br />
                   jadi <em className="italic text-green-600">rapi & profesional</em><br />
                   dalam 2 menit
@@ -129,7 +129,7 @@ export default function Home() {
               <div className="live-dot" />
               Semudah ini
             </div>
-            <h2 className="font-bold tracking-[-1.5px] text-gray-900 mt-4 mb-3.5 text-[28px] md:text-4xl lg:text-5xl" style={{ fontFamily: 'Instrument Serif, serif' }}>
+            <h2 className="font-display font-bold tracking-[-1.5px] text-gray-900 mt-4 mb-3.5 text-[28px] md:text-4xl lg:text-5xl">
               Dari buka Niraga sampai<br />
               dapat order — 4 langkah
             </h2>
@@ -166,7 +166,7 @@ export default function Home() {
               <div className="live-dot" />
               Kenapa Niraga
             </div>
-            <h2 className="font-bold tracking-tight text-gray-900 text-[28px] md:text-4xl lg:text-5xl mt-4 mb-3.5 leading-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
+            <h2 className="font-display font-bold tracking-tight text-gray-900 text-[28px] md:text-4xl lg:text-5xl mt-4 mb-3.5 leading-tight">
               Semua yang kamu butuhkan,<br />
               nggak ada yang bikin mumet
             </h2>
@@ -221,7 +221,7 @@ export default function Home() {
               <div className="text-xs font-bold text-green-400 uppercase tracking-widest mb-4">
                 Sebelum vs Sesudah
               </div>
-              <h2 className="font-bold text-white leading-tight tracking-tight mb-4 text-[28px] md:text-4xl lg:text-5xl" style={{ fontFamily: 'Instrument Serif, serif' }}>
+              <h2 className="font-display font-bold text-white leading-tight tracking-tight mb-4 text-[28px] md:text-4xl lg:text-5xl">
                 Kamu capek jualan<br />
                 cara <em className="italic text-green-400">lama</em>?
               </h2>
@@ -266,7 +266,7 @@ export default function Home() {
             <div className="live-dot" />
             Kata Mereka
           </div>
-          <h2 className="font-bold text-gray-900 text-[clamp(24px,3vw,40px)] tracking-tight leading-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
+          <h2 className="font-display font-bold text-gray-900 text-[clamp(24px,3vw,40px)] tracking-tight leading-tight">
             Seller yang udah pakai<br />
             Niraga bilang begini
           </h2>
@@ -296,7 +296,7 @@ export default function Home() {
               <div key={i} className="bg-white border border-green-100 rounded-[28px] p-6 hover:shadow-[0_8px_24px_rgba(22,163,74,.12)] hover:border-green-200 transition-all duration-300">
                 <div className="mb-5">
                   <div className="text-3xl text-green-200 font-display leading-none mb-2">❝</div>
-                  <p className="text-sm text-body leading-relaxed italic" style={{ fontFamily: 'Instrument Serif, serif' }}>{t.quote}</p>
+                  <p className="text-sm text-body leading-relaxed italic">{t.quote}</p>
                 </div>
                 <div className="flex items-center gap-3 pt-4 border-t border-green-100">
                   <div className="w-10 h-10 rounded-full bg-green-50 border border-green-200 flex items-center justify-center text-xl flex-shrink-0">
@@ -339,7 +339,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-gray-50 border-t border-gray-200 py-8">
         <div className="container-app flex justify-between items-center flex-wrap gap-4">
-          <div className="font-bold text-green-600 text-xl" style={{ fontFamily: 'Instrument Serif, serif' }}>
+          <div className="font-display font-bold text-green-600 text-xl">
             Nira<span className="text-gray-900 font-normal">ga</span>
           </div>
           <div className="text-xs text-gray-400">

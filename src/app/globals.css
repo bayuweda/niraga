@@ -12,7 +12,7 @@
   }
   
   body {
-    font-family: var(--font-poppins), sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #fffdf7;
@@ -347,7 +347,6 @@
 
   .cta-h2 {
     @apply font-bold text-white text-[28px] md:text-[52px] tracking-tight mb-3.5 relative z-10;
-    font-family: 'Instrument Serif', serif;
   }
 
   .cta-p {

@@ -50,7 +50,7 @@ export default function ContohPage() {
             </div>
           </div>
           <div className="text-center px-5 pt-3 pb-5">
-            <div className="font-bold text-[22px] text-gray-900 mb-1 tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>Dapur Dinda</div>
+            <div className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">Dapur Dinda</div>
             <div className="text-xs text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-3.5">Frozen food homemade berkualitas, dibuat fresh setiap hari.</div>
             <div className="flex gap-1.5 justify-center flex-wrap">
               {['Terpercaya', 'COD & Ongkir', 'Respon Cepat'].map(t => (
