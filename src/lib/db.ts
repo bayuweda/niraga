@@ -118,9 +118,11 @@ export async function getDashboardMetrics(storeId: string) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
+  const paidStatuses = ['confirmed', 'done']
+
   const [ordersRes, todayOrdersRes, productsRes, chatRes] = await Promise.all([
-    supabase.from('orders').select('total').eq('store_id', storeId),
-    supabase.from('orders').select('id, total').eq('store_id', storeId).gte('created_at', today.toISOString()),
+    supabase.from('orders').select('total').eq('store_id', storeId).in('status', paidStatuses),
+    supabase.from('orders').select('id, total').eq('store_id', storeId).gte('created_at', today.toISOString()).in('status', paidStatuses),
     supabase.from('products').select('id, stock').eq('store_id', storeId).eq('is_active', true),
     supabase.from('chat_logs').select('id, sender').eq('store_id', storeId).gte('created_at', today.toISOString()),
   ])
