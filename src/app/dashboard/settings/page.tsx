@@ -16,6 +16,7 @@ export default function SettingsPage() {
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', bannerBase64: '' })
+  const [bannerRemoved, setBannerRemoved] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function SettingsPage() {
       if (data) {
         setStore(data)
         setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', bannerBase64: data.banner_url || '' })
+        setBannerRemoved(false)
       }
       setLoading(false)
     }
@@ -36,15 +38,17 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     if (!store || !form.name) { toast.error('Nama toko wajib diisi'); return }
+    const bannerUrl: string | null | undefined = bannerRemoved ? null : (form.bannerBase64 || undefined)
     const { error } = await updateStore(store.id, {
       name: form.name,
       description: form.description || undefined,
       whatsapp: form.wa || undefined,
       shipping_info: form.shippingInfo || undefined,
-      banner_url: form.bannerBase64 || undefined,
+      banner_url: bannerUrl,
     })
     if (error) { toast.error('Gagal menyimpan'); return }
-    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, banner_url: form.bannerBase64 } : null)
+    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, banner_url: form.bannerBase64 || null } : null)
+    setBannerRemoved(false)
     toast.success('Pengaturan disimpan')
   }
 
@@ -100,13 +104,13 @@ export default function SettingsPage() {
                   if (!file) return
                   if (file.size > 2 * 1024 * 1024) { toast.error('Maksimal 2MB'); return }
                   const reader = new FileReader()
-                  reader.onload = () => setForm({ ...form, bannerBase64: reader.result as string })
+                  reader.onload = () => { setForm({ ...form, bannerBase64: reader.result as string }); setBannerRemoved(false) }
                   reader.readAsDataURL(file)
                 }} />
                 {form.bannerBase64 ? (
                   <div className="relative mb-2">
                     <img src={form.bannerBase64} alt="Banner" className="w-full h-24 object-cover rounded-xl border border-gray-200" />
-                    <button onClick={() => setForm({ ...form, bannerBase64: '' })}
+                    <button onClick={() => { setForm({ ...form, bannerBase64: '' }); setBannerRemoved(true) }}
                       className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600">×</button>
                   </div>
                 ) : (
