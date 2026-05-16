@@ -122,12 +122,18 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
       <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
         <div className="bg-white border-b border-gray-200 mb-4">
-          <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.15) 1px, transparent 1px)',
-              backgroundSize: '20px 20px'
-            }} />
-          </div>
+          {store.banner_url ? (
+            <div className="h-[120px] relative overflow-hidden bg-gray-100">
+              <img src={store.banner_url} alt="" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
+              <div className="absolute inset-0" style={{
+                backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.15) 1px, transparent 1px)',
+                backgroundSize: '20px 20px'
+              }} />
+            </div>
+          )}
 
           <div className="flex justify-center">
             <div className="w-[72px] h-[72px] bg-gradient-to-br from-green-600 to-green-400 rounded-[20px] flex items-center justify-center border-[3px] border-white shadow-card-lg -mt-9 relative z-10">

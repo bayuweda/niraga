@@ -10,3 +10,6 @@ end $$;
 
 -- Migration: Add notes column to orders
 alter table public.orders add column if not exists notes text;
+
+-- Migration: Add banner_url column to stores
+alter table public.stores add column if not exists banner_url text;

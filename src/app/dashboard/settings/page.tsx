@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
@@ -15,7 +15,8 @@ export default function SettingsPage() {
   const { user, initialized } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '' })
+  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', bannerBase64: '' })
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!initialized) return
@@ -26,7 +27,7 @@ export default function SettingsPage() {
       const { data } = await getStoreByUserId(user.id)
       if (data) {
         setStore(data)
-        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '' })
+        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', bannerBase64: data.banner_url || '' })
       }
       setLoading(false)
     }
@@ -40,9 +41,10 @@ export default function SettingsPage() {
       description: form.description || undefined,
       whatsapp: form.wa || undefined,
       shipping_info: form.shippingInfo || undefined,
+      banner_url: form.bannerBase64 || undefined,
     })
     if (error) { toast.error('Gagal menyimpan'); return }
-    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo } : null)
+    setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, banner_url: form.bannerBase64 } : null)
     toast.success('Pengaturan disimpan')
   }
 
@@ -90,6 +92,30 @@ export default function SettingsPage() {
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Nama Toko</label>
                 <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Banner Toko <span className="text-gray-400 font-normal">(opsional)</span></label>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  if (file.size > 2 * 1024 * 1024) { toast.error('Maksimal 2MB'); return }
+                  const reader = new FileReader()
+                  reader.onload = () => setForm({ ...form, bannerBase64: reader.result as string })
+                  reader.readAsDataURL(file)
+                }} />
+                {form.bannerBase64 ? (
+                  <div className="relative mb-2">
+                    <img src={form.bannerBase64} alt="Banner" className="w-full h-24 object-cover rounded-xl border border-gray-200" />
+                    <button onClick={() => setForm({ ...form, bannerBase64: '' })}
+                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600">×</button>
+                  </div>
+                ) : (
+                  <button onClick={() => fileInputRef.current?.click()}
+                    className="w-full h-24 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 hover:border-green-500 hover:text-green-600 transition-all text-sm gap-1.5">
+                    <Icon.Camera size={18} /> Upload Banner
+                  </button>
+                )}
+                <div className="text-[11px] text-gray-400 mt-1">Ukuran recomendasi: 880×176px. Max 2MB.</div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Deskripsi</label>
