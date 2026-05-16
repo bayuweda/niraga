@@ -32,12 +32,16 @@ export default function Navbar() {
         </Link>
 
         {initialized && user ? (
-          <Link
-            href="/dashboard"
-            className="text-xs text-muted hover:text-dark font-medium transition-colors"
-          >
-            Dashboard
-          </Link>
+          <>
+            <Link href="/dashboard"
+              className="text-xs text-muted hover:text-dark font-medium transition-colors">
+              Dashboard
+            </Link>
+            <button onClick={() => useAuth.getState().signOut()}
+              className="text-xs text-red-400 hover:text-red-600 font-medium transition-colors">
+              Keluar
+            </button>
+          </>
         ) : (
           <Link
             href="/login"

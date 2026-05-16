@@ -1,9 +1,16 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store'
 
 export default function LoginPage() {
-  const { signInWithGoogle, loading } = useAuth()
+  const router = useRouter()
+  const { user, initialized, signInWithGoogle, loading } = useAuth()
+
+  useEffect(() => {
+    if (initialized && user) router.push('/dashboard')
+  }, [initialized, user])
 
   return (
     <main className="min-h-screen bg-gray-50 pt-16">

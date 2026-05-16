@@ -15,7 +15,7 @@ const menuItems = [
 ]
 
 export default function DashboardSidebar({ currentPage }: { currentPage: string }) {
-  const { user, initialized } = useAuth()
+  const { user, initialized, signOut } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
 
   useEffect(() => {
@@ -63,6 +63,14 @@ export default function DashboardSidebar({ currentPage }: { currentPage: string 
             <span>{item.label}</span>
           </a>
         ))}
+      </div>
+
+      <div className="mt-auto pt-4 border-t border-white/8">
+        <button onClick={signOut}
+          className="flex items-center gap-2.5 w-full text-left px-2.5 py-2.5 rounded-[10px] text-xs font-medium text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-150">
+          <Icon.X size={16} />
+          <span>Keluar</span>
+        </button>
       </div>
     </aside>
   )

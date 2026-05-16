@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 
 export default function SettingsPage() {
   const router = useRouter()
-  const { user, initialized } = useAuth()
+  const { user, initialized, signOut } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '', qrisBase64: '' })
@@ -197,6 +197,10 @@ export default function SettingsPage() {
                 </span>
               </div>
             </div>
+            <button onClick={signOut}
+              className="mt-4 w-full py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm hover:bg-red-100 transition-all">
+              Keluar
+            </button>
           </div>
 
           {/* Danger Zone */}
