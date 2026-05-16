@@ -19,7 +19,7 @@ export default function ProdukPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '', imageBase64: '' })
+  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '', images: [] as string[] })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -39,13 +39,13 @@ export default function ProdukPage() {
   }, [user, initialized])
 
   const resetForm = () => {
-    setForm({ name: '', price: '', unit: '', stock: '', imageBase64: '' })
+    setForm({ name: '', price: '', unit: '', stock: '', images: [] })
     setEditingId(null)
     setShowForm(false)
   }
 
   const openEdit = (p: Product) => {
-    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock), imageBase64: p.image_url || '' })
+    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock), images: p.images?.length ? p.images : (p.image_url ? [p.image_url] : []) })
     setEditingId(p.id)
     setShowForm(true)
   }
@@ -62,7 +62,11 @@ export default function ProdukPage() {
       unit: form.unit,
       stock: parseInt(form.stock) || 0,
     }
-    if (form.imageBase64) payload.image_url = form.imageBase64
+    const filteredImages = form.images.filter(Boolean)
+    if (filteredImages.length > 0) {
+      payload.images = filteredImages
+      payload.image_url = filteredImages[0]
+    }
 
     if (editingId) {
       const { error } = await updateProduct(editingId, payload)
@@ -152,29 +156,33 @@ export default function ProdukPage() {
                   placeholder="0" type="number" />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Foto Produk</label>
-                <div className="flex items-center gap-3">
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Foto Produk <span className="text-gray-400 font-normal">(maks 3)</span></label>
+                <div className="flex items-center gap-3 flex-wrap">
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={e => {
                     const file = e.target.files?.[0]
                     if (!file) return
                     if (file.size > 2 * 1024 * 1024) { toast.error('Maksimal 2MB'); return }
                     const reader = new FileReader()
-                    reader.onload = () => setForm({ ...form, imageBase64: reader.result as string })
+                    reader.onload = () => {
+                      if (form.images.length >= 3) { toast.error('Maksimal 3 foto'); return }
+                      setForm({ ...form, images: [...form.images, reader.result as string] })
+                    }
                     reader.readAsDataURL(file)
                   }} className="hidden" />
-                  {form.imageBase64 ? (
-                    <div className="relative">
-                      <img src={form.imageBase64} alt="Preview" className="w-14 h-14 object-cover rounded-xl border border-gray-200" />
-                      <button onClick={() => setForm({ ...form, imageBase64: '' })}
+                  {form.images.map((img, i) => (
+                    <div key={i} className="relative">
+                      <img src={img} alt={`Foto ${i + 1}`} className="w-14 h-14 object-cover rounded-xl border border-gray-200" />
+                      <button onClick={() => setForm({ ...form, images: form.images.filter((_, j) => j !== i) })}
                         className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px]">×</button>
                     </div>
-                  ) : (
+                  ))}
+                  {form.images.length < 3 && (
                     <button onClick={() => fileInputRef.current?.click()}
                       className="w-14 h-14 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 hover:border-green-500 hover:text-green-600 transition-all">
                       <Icon.Camera size={20} />
                     </button>
                   )}
-                  <span className="text-[11px] text-gray-400">Opsional. Max 2MB.</span>
+                  <span className="text-[11px] text-gray-400">{form.images.length}/3 · Max 2MB per foto</span>
                 </div>
               </div>
               <div className="flex items-end gap-2 md:col-span-4">
@@ -199,8 +207,8 @@ export default function ProdukPage() {
               {products.map(p => (
                 <div key={p.id} className="bg-white border border-gray-200 rounded-3xl p-4">
                   <div className="flex items-start gap-3">
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.name} className="w-16 h-16 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
+                    {p.images?.[0] || p.image_url ? (
+                      <img src={p.images?.[0] || p.image_url!} alt={p.name} className="w-16 h-16 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
                     ) : (
                       <div className="w-16 h-16 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0" style={{ background: p.bg_color }}>
                         <Icon.Package size={28} />
@@ -245,8 +253,8 @@ export default function ProdukPage() {
                     <tr key={p.id} className="border-b border-gray-50 hover:bg-green-50/50 transition-colors">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          {p.image_url ? (
-                            <img src={p.image_url} alt={p.name} className="w-10 h-10 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
+                          {p.images?.[0] || p.image_url ? (
+                            <img src={p.images?.[0] || p.image_url!} alt={p.name} className="w-10 h-10 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
                           ) : (
                             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0" style={{ background: p.bg_color }}>
                               <Icon.Package size={20} />

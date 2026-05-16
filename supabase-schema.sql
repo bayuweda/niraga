@@ -39,6 +39,8 @@ create table if not exists public.products (
   stock integer default 0,
   is_active boolean default true,
   image_url text,
+  images jsonb default '[]'::jsonb,
+  description text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 

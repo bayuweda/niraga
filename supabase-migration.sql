@@ -19,3 +19,8 @@ alter table public.stores add column if not exists payment_info text;
 
 -- Migration: Add qris_url column to stores
 alter table public.stores add column if not exists qris_url text;
+
+-- Migration: Add images jsonb and description to products
+alter table public.products add column if not exists images jsonb default '[]'::jsonb;
+alter table public.products add column if not exists description text;
+update public.products set images = jsonb_build_array(image_url) where image_url is not null and (images is null or images = '[]'::jsonb);

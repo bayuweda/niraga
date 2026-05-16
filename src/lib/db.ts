@@ -66,6 +66,8 @@ export async function createProduct(product: {
   bg_color?: string
   stock?: number
   image_url?: string
+  images?: string[]
+  description?: string
 }) {
   const supabase = getSupabaseClient()
   return supabase.from('products').insert(product).select().single()
@@ -80,6 +82,8 @@ export async function updateProduct(id: string, updates: Partial<{
   stock: number
   is_active: boolean
   image_url: string
+  images: string[]
+  description: string
 }>) {
   const supabase = getSupabaseClient()
   return supabase.from('products').update(updates).eq('id', id).select().single()

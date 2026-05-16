@@ -168,6 +168,7 @@ export default function BuatTokoPage() {
           unit: p.unit,
           emoji: p.emoji || '📦',
           image_url: p.imageBase64 || undefined,
+          images: p.imageBase64 ? [p.imageBase64] : [],
         })
         if (prodErr) console.error('Gagal simpan produk:', prodErr)
       }

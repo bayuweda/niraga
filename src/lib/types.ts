@@ -25,6 +25,8 @@ export interface Product {
   stock: number
   is_active: boolean
   image_url: string | null
+  images: string[]
+  description: string | null
   created_at: string
 }
 
