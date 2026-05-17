@@ -26,7 +26,8 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [metrics, setMetrics] = useState({
     todayRevenue: 0,
-    todayOrders: 0,
+    todayPaidOrders: 0,
+    todayNewOrders: 0,
     todayChats: 0,
     activeProducts: 0,
     lowStockProducts: 0,
@@ -150,15 +151,15 @@ export default function DashboardPage() {
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Money size={14} /> Pendapatan Hari Ini</span>}
             value={formatRupiah(metrics.todayRevenue)}
-            change={`${metrics.todayOrders} order masuk`}
+            change={`${metrics.todayPaidOrders} order selesai`}
             trend="up"
             href="/dashboard/pesanan"
           />
           <MetricCard
             label={<span className="flex items-center gap-1.5"><Icon.Orders size={14} /> Order Masuk</span>}
-            value={String(metrics.todayOrders)}
-            change={metrics.todayOrders > 0 ? `${metrics.todayOrders} order baru` : 'Belum ada order'}
-            trend={metrics.todayOrders > 0 ? 'up' : 'down'}
+            value={String(metrics.todayNewOrders)}
+            change={metrics.todayNewOrders > 0 ? `${metrics.todayNewOrders} order baru` : 'Belum ada order baru'}
+            trend={metrics.todayNewOrders > 0 ? 'up' : 'down'}
             href="/dashboard/pesanan"
           />
           <MetricCard

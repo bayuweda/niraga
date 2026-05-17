@@ -132,16 +132,18 @@ export async function getDashboardMetrics(storeId: string) {
 
   const paidStatuses = ['confirmed', 'done']
 
-  const [ordersRes, todayOrdersRes, productsRes, chatRes] = await Promise.all([
+  const [ordersRes, todayPaidRes, todayNewRes, productsRes, chatRes] = await Promise.all([
     supabase.from('orders').select('total').eq('store_id', storeId).in('status', paidStatuses),
     supabase.from('orders').select('id, total').eq('store_id', storeId).gte('created_at', today.toISOString()).in('status', paidStatuses),
+    supabase.from('orders').select('id').eq('store_id', storeId).gte('created_at', today.toISOString()).eq('status', 'new'),
     supabase.from('products').select('id, stock').eq('store_id', storeId).eq('is_active', true),
     supabase.from('chat_logs').select('id, sender').eq('store_id', storeId).gte('created_at', today.toISOString()),
   ])
 
   const totalRevenue = ordersRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
-  const todayRevenue = todayOrdersRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
-  const todayOrders = todayOrdersRes.data?.length ?? 0
+  const todayRevenue = todayPaidRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
+  const todayPaidOrders = todayPaidRes.data?.length ?? 0
+  const todayNewOrders = todayNewRes.data?.length ?? 0
   const activeProducts = productsRes.data?.length ?? 0
   const lowStockProducts = productsRes.data?.filter((p: any) => p.stock !== null && p.stock <= 2).length ?? 0
   const todayChats = chatRes.data?.length ?? 0
@@ -151,7 +153,8 @@ export async function getDashboardMetrics(storeId: string) {
   return {
     totalRevenue,
     todayRevenue,
-    todayOrders,
+    todayPaidOrders,
+    todayNewOrders,
     activeProducts,
     lowStockProducts,
     todayChats,
