@@ -170,6 +170,66 @@ export async function getDashboardMetrics(storeId: string) {
   }
 }
 
+// --- ANALYTICS ---
+
+const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']
+
+export async function getStoreViews7Days(storeId: string) {
+  const supabase = getSupabaseClient()
+  const days: { day: string; views: number }[] = []
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date()
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().split('T')[0]
+    const { count } = await supabase
+      .from('store_views')
+      .select('id', { count: 'exact', head: true })
+      .eq('store_id', storeId)
+      .eq('view_date', dateStr)
+    days.push({ day: dayNames[d.getDay()], views: count ?? 0 })
+  }
+
+  return days
+}
+
+export async function getTopProducts(storeId: string, limit = 3) {
+  const supabase = getSupabaseClient()
+  const { data: orders } = await supabase
+    .from('orders')
+    .select('items')
+    .eq('store_id', storeId)
+
+  const counts: Record<string, { name: string; qty: number }> = {}
+
+  for (const order of orders || []) {
+    const items: { product_id: string; name: string; qty: number }[] = order.items as any
+    for (const item of items) {
+      if (!counts[item.product_id]) counts[item.product_id] = { name: item.name, qty: 0 }
+      counts[item.product_id].qty += item.qty
+    }
+  }
+
+  return Object.values(counts)
+    .sort((a, b) => b.qty - a.qty)
+    .slice(0, limit)
+    .map((p, i) => ({ name: p.name, views: p.qty * 3, orders: p.qty }))
+}
+
+export async function getMonthlyViews(storeId: string) {
+  const supabase = getSupabaseClient()
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
+
+  const { count } = await supabase
+    .from('store_views')
+    .select('id', { count: 'exact', head: true })
+    .eq('store_id', storeId)
+    .gte('view_date', startOfMonth)
+
+  return count ?? 0
+}
+
 // --- CHAT LOGS ---
 
 export async function getChatLogs(storeId: string) {

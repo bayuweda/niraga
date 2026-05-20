@@ -8,7 +8,7 @@ import DashboardSidebar from '@/components/dashboard/Sidebar'
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import AnalyticsCard from '@/components/dashboard/AnalyticsCard'
 import { useAuth } from '@/lib/store'
-import { getStoreByUserId, getOrdersByStoreId, getDashboardMetrics } from '@/lib/db'
+import { getStoreByUserId, getOrdersByStoreId, getDashboardMetrics, getStoreViews7Days, getTopProducts, getMonthlyViews } from '@/lib/db'
 import { formatRupiah, generateReminderMessage } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icons'
 import type { Store, Order } from '@/lib/types'
@@ -40,6 +40,9 @@ export default function DashboardPage() {
   })
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [views7Days, setViews7Days] = useState<{ day: string; views: number }[]>([])
+  const [topProducts, setTopProducts] = useState<{ name: string; views: number; orders: number }[]>([])
+  const [monthlyViews, setMonthlyViews] = useState(0)
 
   useEffect(() => {
     if (!initialized) return
@@ -58,13 +61,19 @@ export default function DashboardPage() {
 
       setStore(storeData)
 
-      const [ordersRes, metricsRes] = await Promise.all([
+      const [ordersRes, metricsRes, views7, tops, monthly] = await Promise.all([
         getOrdersByStoreId(storeData.id),
         getDashboardMetrics(storeData.id),
+        getStoreViews7Days(storeData.id),
+        getTopProducts(storeData.id),
+        getMonthlyViews(storeData.id),
       ])
 
       if (ordersRes.data) setOrders(ordersRes.data)
       setMetrics(metricsRes)
+      setViews7Days(views7)
+      setTopProducts(tops)
+      setMonthlyViews(monthly)
       setLoading(false)
     }
 
@@ -241,7 +250,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <AnalyticsCard themeColor={store.theme_color} />
+        <AnalyticsCard
+          themeColor={store.theme_color}
+          views7Days={views7Days}
+          topProducts={topProducts}
+          monthlyViews={monthlyViews} />
       </main>
       <MobileBottomNav />
     </div>
