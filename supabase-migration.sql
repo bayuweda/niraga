@@ -23,4 +23,45 @@ alter table public.stores add column if not exists qris_url text;
 -- Migration: Add images jsonb and description to products
 alter table public.products add column if not exists images jsonb default '[]'::jsonb;
 alter table public.products add column if not exists description text;
+alter table public.products add column if not exists category text default 'Semua';
 update public.products set images = jsonb_build_array(image_url) where image_url is not null and (images is null or images = '[]'::jsonb);
+
+-- Migration: Store views counter
+create table if not exists public.store_views (
+  id         uuid default gen_random_uuid() primary key,
+  store_id   uuid references public.stores(id) on delete cascade not null,
+  viewed_at  timestamptz default now(),
+  view_date  date default current_date
+);
+create index if not exists store_views_store_date_idx on public.store_views(store_id, view_date);
+create index if not exists products_store_category_idx on public.products(store_id, category);
+
+create or replace function public.increment_store_view(sid uuid)
+returns integer
+language plpgsql security definer
+as $$
+declare
+  today_count integer;
+begin
+  insert into public.store_views(store_id) values(sid);
+  select count(*) into today_count
+  from public.store_views
+  where store_id = sid and view_date = current_date;
+  return today_count;
+end;
+$$;
+
+-- Migration: Add theme_color column to stores
+alter table public.stores add column if not exists theme_color text default '#16a34a';
+
+alter table public.store_views enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname = 'Anyone can insert view') then
+    create policy "Anyone can insert view" on public.store_views for insert with check (true);
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Owners can read their store views') then
+    create policy "Owners can read their store views" on public.store_views for select using (
+      store_id in (select id from public.stores where user_id = auth.uid())
+    );
+  end if;
+end $$;

@@ -19,7 +19,7 @@ export default function ProdukPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '', images: [] as string[] })
+  const [form, setForm] = useState({ name: '', price: '', unit: '', stock: '', images: [] as string[], category: 'Semua' })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -39,13 +39,13 @@ export default function ProdukPage() {
   }, [user, initialized])
 
   const resetForm = () => {
-    setForm({ name: '', price: '', unit: '', stock: '', images: [] })
+    setForm({ name: '', price: '', unit: '', stock: '', images: [], category: 'Semua' })
     setEditingId(null)
     setShowForm(false)
   }
 
   const openEdit = (p: Product) => {
-    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock), images: p.images?.length ? p.images : (p.image_url ? [p.image_url] : []) })
+    setForm({ name: p.name, price: String(p.price), unit: p.unit, stock: String(p.stock), images: p.images?.length ? p.images : (p.image_url ? [p.image_url] : []), category: p.category })
     setEditingId(p.id)
     setShowForm(true)
   }
@@ -61,6 +61,7 @@ export default function ProdukPage() {
       price: parseInt(form.price),
       unit: form.unit,
       stock: parseInt(form.stock) || 0,
+      category: form.category,
     }
     const filteredImages = form.images.filter(Boolean)
     if (filteredImages.length > 0) {
@@ -155,6 +156,12 @@ export default function ProdukPage() {
                   className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   placeholder="0" type="number" />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
+                <input value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                  placeholder="Frozen Food, Snack, dll" />
+              </div>
               <div className="md:col-span-2">
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Foto Produk <span className="text-gray-400 font-normal">(maks 3)</span></label>
                 <div className="flex items-center gap-3 flex-wrap">
@@ -220,6 +227,7 @@ export default function ProdukPage() {
                       <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-1 flex-wrap">
                         <span>{p.unit}</span>
                         <span className={p.stock <= 2 ? 'font-semibold text-red-500' : ''}>Stok: {p.stock}</span>
+                        {p.category && p.category !== 'Semua' && <span className="bg-gray-100 px-1.5 py-0.5 rounded text-[10px]">{p.category}</span>}
                       </div>
                     </div>
                     <button onClick={() => handleToggleActive(p)}
@@ -243,6 +251,7 @@ export default function ProdukPage() {
                     <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Produk</th>
                     <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Harga</th>
                     <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Unit</th>
+                    <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Kategori</th>
                     <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Stok</th>
                     <th className="text-left text-[11px] font-bold text-gray-400 uppercase tracking-widest px-5 py-3">Status</th>
                     <th className="text-right px-5 py-3" />
@@ -268,6 +277,9 @@ export default function ProdukPage() {
                       </td>
                       <td className="px-5 py-3.5">
                         <div className="text-sm text-gray-500">{p.unit}</div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="text-sm text-gray-500">{p.category !== 'Semua' ? p.category : '-'}</div>
                       </td>
                       <td className="px-5 py-3.5">
                         <div className={`text-sm font-semibold ${p.stock <= 2 ? 'text-red-500' : 'text-gray-900'}`}>{p.stock}</div>

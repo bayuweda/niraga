@@ -57,6 +57,10 @@ export default function ContohPage() {
                 <div key={t} className="text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1">{t}</div>
               ))}
             </div>
+            <div className="flex items-center justify-center gap-1.5 mt-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[11px] text-gray-500 font-medium">47 orang melihat toko ini hari ini</span>
+            </div>
           </div>
         </div>
 

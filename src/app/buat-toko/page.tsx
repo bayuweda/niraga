@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/store'
 import { getSupabaseClient } from '@/lib/supabase'
 import { createStore, createProduct } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
+import { STORE_THEMES } from '@/lib/themes'
 
 interface Product {
   id: number
@@ -23,7 +24,7 @@ export default function BuatTokoPage() {
   const router = useRouter()
   const { user, initialized, initialize } = useAuth()
   const [step, setStep] = useState(0)
-  const [store, setStore] = useState({ name: '', username: '', wa: '', desc: '', shippingInfo: '' })
+  const [store, setStore] = useState({ name: '', username: '', wa: '', desc: '', shippingInfo: '', themeColor: '#16a34a' })
   const [products, setProducts] = useState<Product[]>([
     { id: 1, emoji: '🥟', name: 'Siomay Frozen Ayam', price: '45000', unit: 'isi 20 pcs', imageBase64: '', imageUrl: '' },
   ])
@@ -151,6 +152,7 @@ export default function BuatTokoPage() {
         whatsapp: store.wa || undefined,
         description: store.desc || undefined,
         shipping_info: store.shippingInfo || undefined,
+        theme_color: store.themeColor,
       })
 
       if (error || !newStore) {
@@ -305,6 +307,25 @@ export default function BuatTokoPage() {
               </div>
 
               <div>
+                <label className="block text-sm font-bold text-gray-900 mb-2">Warna Tema Toko</label>
+                <div className="flex gap-2.5 flex-wrap">
+                  {STORE_THEMES.map(t => (
+                    <button key={t.id} onClick={() => setStore({ ...store, themeColor: t.primary })}
+                      title={t.label}
+                      className="w-9 h-9 rounded-full transition-all duration-150"
+                      style={{
+                        background: t.primary,
+                        border: store.themeColor === t.primary ? '3px solid #0f1a0f' : '3px solid transparent',
+                        outline: store.themeColor === t.primary ? `2px solid ${t.primary}` : 'none',
+                        outlineOffset: 2,
+                        transform: store.themeColor === t.primary ? 'scale(1.15)' : 'scale(1)',
+                      }} />
+                  ))}
+                </div>
+                <div className="text-[11px] text-gray-500 mt-1.5">Warna ini akan muncul di halaman toko kamu.</div>
+              </div>
+
+              <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Info Pengiriman <span className="text-gray-500 font-normal">(opsional)</span></label>
                 <input
                   type="text"
@@ -413,7 +434,10 @@ export default function BuatTokoPage() {
             {/* Preview Phone */}
             <div className="bg-white rounded-[28px] p-4 shadow-card-lg border border-gray-200 mb-5">
               <div className="text-center pb-4 border-b border-gray-200 mb-3.5">
-                <div className="w-14 h-14 bg-gradient-to-br from-green-600 to-green-400 rounded-[18px] flex items-center justify-center mx-auto mb-2.5 shadow-green"><Icon.Store size={28} className="text-white" /></div>
+                <div className="w-14 h-14 rounded-[18px] flex items-center justify-center mx-auto mb-2.5 shadow-green"
+                  style={{ background: `linear-gradient(135deg, ${store.themeColor}, ${store.themeColor}dd)` }}>
+                  <Icon.Store size={28} className="text-white" />
+                </div>
                 <div className="font-bold text-base text-gray-900 mb-0.5">{store.name || 'Nama Toko'}</div>
                 <div className="text-[11px] text-gray-500">{store.desc || 'Toko online kamu'}</div>
               </div>

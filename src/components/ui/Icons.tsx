@@ -3,7 +3,7 @@ import {
   Store, ShoppingCart, MessageCircle, DollarSign, TrendingUp, TrendingDown,
   User, Plus, ChevronRight, ChevronLeft, Check, X, Pencil, ArrowUpRight, ArrowDownRight,
   Search, Camera, Save, ExternalLink, Share2, Copy, ArrowLeft, ShoppingBag,
-  Sparkles, Star, Clock, Truck, Zap, FileText, Pointer, type LucideProps,
+  Sparkles, Star, Clock, Truck, Zap, FileText, Pointer, Eye, type LucideProps,
 } from 'lucide-react'
 
 export const Icon = {
@@ -42,6 +42,7 @@ export const Icon = {
   Zap: (props: LucideProps) => <Zap {...props} />,
   FileText: (props: LucideProps) => <FileText {...props} />,
   Hand: (props: LucideProps) => <Pointer {...props} />,
+  Eye: (props: LucideProps) => <Eye {...props} />,
 }
 
 export function WhatsAppIcon({ size = 24 }: { size?: number }) {

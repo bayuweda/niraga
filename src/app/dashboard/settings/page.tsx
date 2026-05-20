@@ -7,6 +7,7 @@ import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, updateStore, deleteStore } from '@/lib/db'
 import { Icon } from '@/components/ui/Icons'
+import { STORE_THEMES } from '@/lib/themes'
 import type { Store } from '@/lib/types'
 import { toast } from 'sonner'
 
@@ -15,7 +16,7 @@ export default function SettingsPage() {
   const { user, initialized, signOut } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '', qrisBase64: '' })
+  const [form, setForm] = useState({ name: '', description: '', wa: '', shippingInfo: '', paymentInfo: '', bannerBase64: '', qrisBase64: '', themeColor: '#16a34a' })
   const [bannerRemoved, setBannerRemoved] = useState(false)
   const [qrisRemoved, setQrisRemoved] = useState(false)
   const qrisInputRef = useRef<HTMLInputElement>(null)
@@ -30,7 +31,7 @@ export default function SettingsPage() {
       const { data } = await getStoreByUserId(user.id)
       if (data) {
         setStore(data)
-        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '', qrisBase64: data.qris_url || '' })
+        setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '', qrisBase64: data.qris_url || '', themeColor: data.theme_color })
         setBannerRemoved(false)
         setQrisRemoved(false)
       }
@@ -51,6 +52,7 @@ export default function SettingsPage() {
       payment_info: form.paymentInfo || undefined,
       qris_url: qrisUrl,
       banner_url: bannerUrl,
+      theme_color: form.themeColor,
     })
     if (error) { toast.error('Gagal menyimpan'); return }
     setStore(prev => prev ? { ...prev, name: form.name, description: form.description, whatsapp: form.wa, shipping_info: form.shippingInfo, payment_info: form.paymentInfo, qris_url: form.qrisBase64 || null, banner_url: form.bannerBase64 || null } : null)
@@ -127,6 +129,23 @@ export default function SettingsPage() {
                   </button>
                 )}
                 <div className="text-[11px] text-gray-400 mt-1">Ukuran recomendasi: 880×176px. Max 2MB.</div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1">Warna Tema</label>
+                <div className="flex gap-2.5 flex-wrap">
+                  {STORE_THEMES.map(t => (
+                    <button key={t.id} onClick={() => setForm({ ...form, themeColor: t.primary })}
+                      title={t.label}
+                      className="w-8 h-8 rounded-full transition-all duration-150"
+                      style={{
+                        background: t.primary,
+                        border: form.themeColor === t.primary ? '3px solid #0f1a0f' : '3px solid transparent',
+                        outline: form.themeColor === t.primary ? `2px solid ${t.primary}` : 'none',
+                        outlineOffset: 2,
+                        transform: form.themeColor === t.primary ? 'scale(1.15)' : 'scale(1)',
+                      }} />
+                  ))}
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Deskripsi</label>

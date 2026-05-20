@@ -10,6 +10,7 @@ export interface Store {
   payment_info: string | null
   qris_url: string | null
   banner_url: string | null
+  theme_color: string
   status: 'active' | 'inactive'
   created_at: string
 }
@@ -27,6 +28,7 @@ export interface Product {
   image_url: string | null
   images: string[]
   description: string | null
+  category: string
   created_at: string
 }
 

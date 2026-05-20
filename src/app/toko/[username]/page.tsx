@@ -3,7 +3,9 @@
 import { useEffect, useState, use, useRef } from 'react'
 import { formatRupiah } from '@/lib/utils'
 import { getStoreBySlug, getProductsByStoreId, createOrder } from '@/lib/db'
+import { getSupabaseClient } from '@/lib/supabase'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
+import { getThemeByColor } from '@/lib/themes'
 import type { Store, Product } from '@/lib/types'
 
 export default function StorePage({ params }: { params: Promise<{ username: string }> }) {
@@ -21,6 +23,8 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const [customerWA, setCustomerWA] = useState('')
   const [customerNotes, setCustomerNotes] = useState('')
   const [sending, setSending] = useState(false)
+  const [todayViews, setTodayViews] = useState<number>(0)
+  const [activeCategory, setActiveCategory] = useState('Semua')
   const touchStartX = useRef(0)
 
   useEffect(() => {
@@ -31,6 +35,11 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
         setStore(storeData)
         const { data: productsData } = await getProductsByStoreId(storeData.id)
         if (productsData) setProducts(productsData)
+        const supabase = getSupabaseClient()
+        if (supabase) {
+          supabase.rpc('increment_store_view', { sid: storeData.id })
+            .then(({ data }: { data: number | null }) => { if (data) setTodayViews(data) })
+        }
       } catch (e) { console.error('Failed to load store:', e) }
       setLoading(false)
     }
@@ -70,6 +79,10 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
     if (p.image_url) return [p.image_url]
     return []
   }
+
+  const theme = getThemeByColor(store?.theme_color)
+  const categories = ['Semua', ...new Set(products.map(p => p.category).filter(c => c && c !== 'Semua'))]
+  const filteredProducts = activeCategory === 'Semua' ? products : products.filter(p => p.category === activeCategory)
 
   const openCheckout = () => {
     setShowCart(false)
@@ -136,7 +149,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               <img src={store.banner_url} alt="" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
+            <div className="h-[88px] relative" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primary}cc)` }}>
               <div className="absolute inset-0" style={{
                 backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.15) 1px, transparent 1px)',
                 backgroundSize: '20px 20px'
@@ -145,7 +158,8 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
           )}
 
           <div className="flex justify-center">
-            <div className="w-[72px] h-[72px] bg-gradient-to-br from-green-600 to-green-400 rounded-[20px] flex items-center justify-center border-[3px] border-white shadow-card-lg -mt-9 relative z-10">
+            <div className="w-[72px] h-[72px] rounded-[20px] flex items-center justify-center border-[3px] border-white shadow-card-lg -mt-9 relative z-10"
+              style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primary}cc)` }}>
               <Icon.Store size={36} className="text-white" />
             </div>
           </div>
@@ -156,10 +170,20 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               <div className="text-xs text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-3.5">{store.description}</div>
             )}
             <div className="flex gap-1.5 justify-center flex-wrap">
-              <div className="text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1 flex items-center gap-1"><Icon.Check size={10} /> Terpercaya</div>
-              <div className="text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1 flex items-center gap-1"><Icon.Truck size={10} /> COD & Ongkir</div>
-              <div className="text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 rounded-full px-2.5 py-1 flex items-center gap-1"><Icon.Zap size={10} /> Respon Cepat</div>
+              {[{ icon: Icon.Check, label: 'Terpercaya' }, { icon: Icon.Truck, label: 'COD & Ongkir' }, { icon: Icon.Zap, label: 'Respon Cepat' }].map(({ icon: TagIcon, label }) => (
+                <div key={label}
+                  className="text-[10px] font-bold rounded-full px-2.5 py-1 flex items-center gap-1"
+                  style={{ color: theme.primary, background: theme.light, border: `1px solid ${theme.border}` }}>
+                  <TagIcon size={10} /> {label}
+                </div>
+              ))}
             </div>
+            {todayViews > 0 && (
+              <div className="flex items-center justify-center gap-1.5 mt-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[11px] text-gray-500 font-medium">{todayViews} orang melihat toko ini hari ini</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -197,8 +221,25 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               </button>
             )}
           </div>
+
+          {categories.length > 1 && (
+            <div className="flex gap-1.5 flex-wrap mb-3.5 px-0.5">
+              {categories.map(cat => (
+                <button key={cat} onClick={() => setActiveCategory(cat)}
+                  className="text-[11px] font-bold rounded-full px-3 py-1.5 transition-all"
+                  style={{
+                    background: activeCategory === cat ? theme.primary : '#ffffff',
+                    color: activeCategory === cat ? '#ffffff' : '#6b7280',
+                    border: activeCategory === cat ? 'none' : '1.5px solid #e5e7eb',
+                  }}>
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-2.5">
-            {products.map(p => {
+            {filteredProducts.map(p => {
               const images = getProductImages(p)
               const firstImg = images[0]
               const inCart = cart[p.id]
@@ -314,7 +355,8 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
                 </button>
               )}
               <button onClick={addToCart}
-                className="flex-1 py-3 bg-green-600 text-white rounded-xl font-bold text-sm shadow-[0_4px_12px_rgba(22,163,74,.3)] hover:bg-green-700 transition-all flex items-center justify-center gap-1.5">
+                className="flex-1 py-3 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1.5"
+                style={{ background: theme.primary, boxShadow: `0 4px 12px ${theme.primary}44` }}>
                 <Icon.Cart size={16} /> {cart[selectedProd.id] ? 'Update Keranjang' : 'Tambah ke Keranjang'}
               </button>
             </div>

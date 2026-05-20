@@ -3,6 +3,14 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
+-- STORE VIEWS (counter pengunjung)
+create table if not exists public.store_views (
+  id         uuid default gen_random_uuid() primary key,
+  store_id   uuid references public.stores(id) on delete cascade not null,
+  viewed_at  timestamptz default now(),
+  view_date  date default current_date
+);
+
 -- USERS (mirrors auth.users)
 create table if not exists public.profiles (
   id uuid references auth.users(id) on delete cascade not null primary key,
@@ -23,6 +31,7 @@ create table if not exists public.stores (
   payment_info text,
   qris_url text,
   banner_url text,
+  theme_color text default '#16a34a',
   status text default 'active' check (status in ('active', 'inactive')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -41,6 +50,7 @@ create table if not exists public.products (
   image_url text,
   images jsonb default '[]'::jsonb,
   description text,
+  category text default 'Semua',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -85,6 +95,7 @@ alter table public.products enable row level security;
 alter table public.orders enable row level security;
 alter table public.bot_settings enable row level security;
 alter table public.chat_logs enable row level security;
+alter table if exists public.store_views enable row level security;
 
 -- RLS POLICIES
 
@@ -123,6 +134,14 @@ do $$ begin
   if not exists (select 1 from pg_policies where policyname = 'Store owners can view chat logs') then
     create policy "Store owners can view chat logs" on public.chat_logs for select using ((select user_id from stores where id = store_id) = auth.uid());
   end if;
+  if not exists (select 1 from pg_policies where policyname = 'Anyone can insert view') then
+    create policy "Anyone can insert view" on public.store_views for insert with check (true);
+  end if;
+  if not exists (select 1 from pg_policies where policyname = 'Owners can read their store views') then
+    create policy "Owners can read their store views" on public.store_views for select using (
+      store_id in (select id from public.stores where user_id = auth.uid())
+    );
+  end if;
 end $$;
 
 -- Add shipping_info column if upgrading from old schema
@@ -135,6 +154,7 @@ create index if not exists products_store_id_idx on public.products(store_id);
 create index if not exists orders_store_id_idx on public.orders(store_id);
 create index if not exists orders_status_idx on public.orders(status);
 create index if not exists chat_logs_store_id_idx on public.chat_logs(store_id);
+create index if not exists store_views_store_date_idx on public.store_views(store_id, view_date);
 
 -- FUNCTIONS & TRIGGERS
 
@@ -159,4 +179,20 @@ language sql
 stable
 as $$
   select not exists (select 1 from public.stores where slug = uname);
+$$;
+
+-- Increment store view counter
+create or replace function public.increment_store_view(sid uuid)
+returns integer
+language plpgsql security definer
+as $$
+declare
+  today_count integer;
+begin
+  insert into public.store_views(store_id) values(sid);
+  select count(*) into today_count
+  from public.store_views
+  where store_id = sid and view_date = current_date;
+  return today_count;
+end;
 $$;

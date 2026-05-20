@@ -6,11 +6,14 @@ import MetricCard from '@/components/ui/MetricCard'
 import Badge from '@/components/ui/Badge'
 import DashboardSidebar from '@/components/dashboard/Sidebar'
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav'
+import AnalyticsCard from '@/components/dashboard/AnalyticsCard'
 import { useAuth } from '@/lib/store'
 import { getStoreByUserId, getOrdersByStoreId, getDashboardMetrics } from '@/lib/db'
-import { formatRupiah } from '@/lib/utils'
+import { formatRupiah, generateReminderMessage } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icons'
 import type { Store, Order } from '@/lib/types'
+import dayjs from 'dayjs'
+import { toast } from 'sonner'
 
 const statusLabel: Record<string, string> = {
   new: 'Baru',
@@ -33,6 +36,7 @@ export default function DashboardPage() {
     lowStockProducts: 0,
     autoReplyRate: 0,
     totalRevenue: 0,
+    todayViews: 0,
   })
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -94,6 +98,18 @@ export default function DashboardPage() {
   }
 
   const recentOrders = orders.slice(0, 5)
+
+  const handleRemind = (order: Order) => {
+    if (!store) return
+    const msg = generateReminderMessage(
+      store.name,
+      order.customer_name,
+      order.items.map((i: any) => ({ name: i.name, qty: i.qty, price: i.price })),
+      dayjs(order.created_at).format('DD MMM, HH:mm')
+    )
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer')
+    toast.success('Template reminder siap — tinggal kirim ke pelanggan!')
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50 pt-16">
@@ -169,6 +185,13 @@ export default function DashboardPage() {
             trend={metrics.lowStockProducts > 0 ? 'down' : 'up'}
             href="/dashboard/produk"
           />
+          <MetricCard
+            label={<span className="flex items-center gap-1.5"><Icon.Eye size={14} /> Pengunjung Hari Ini</span>}
+            value={String(metrics.todayViews)}
+            change={metrics.todayViews > 0 ? `${metrics.todayViews} lihat toko` : 'Belum ada pengunjung'}
+            trend={metrics.todayViews > 0 ? 'up' : 'down'}
+            href={`/toko/${store.slug}`}
+          />
         </div>
 
         {/* Main Grid */}
@@ -203,6 +226,13 @@ export default function DashboardPage() {
                     <div className="text-right flex-shrink-0">
                       <div className="text-xs font-bold text-gray-900 mb-1">{formatRupiah(order.total)}</div>
                       <Badge variant={order.status as any}>{statusLabel[order.status] || order.status}</Badge>
+                      {order.status === 'new' && (
+                        <button onClick={(e) => { e.stopPropagation(); handleRemind(order) }}
+                          title="Buka WA dengan pesan pengingat untuk pelanggan ini"
+                          className="mt-1.5 text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 rounded-md px-1.5 py-0.5 flex items-center gap-1 hover:bg-green-100 transition-colors w-full justify-center">
+                          💬 Remind WA
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -210,6 +240,8 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+
+        <AnalyticsCard themeColor={store.theme_color} />
       </main>
       <MobileBottomNav />
     </div>

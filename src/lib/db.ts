@@ -23,6 +23,7 @@ export async function createStore(store: {
   logo_emoji?: string
   whatsapp?: string
   shipping_info?: string
+  theme_color?: string
 }) {
   const supabase = getSupabaseClient()
   return supabase.from('stores').insert(store).select().single()
@@ -37,6 +38,7 @@ export async function updateStore(id: string, updates: Partial<{
   payment_info: string
   qris_url: string | null
   banner_url: string | null
+  theme_color: string
   status: 'active' | 'inactive'
 }>) {
   const supabase = getSupabaseClient()
@@ -68,6 +70,7 @@ export async function createProduct(product: {
   image_url?: string
   images?: string[]
   description?: string
+  category?: string
 }) {
   const supabase = getSupabaseClient()
   return supabase.from('products').insert(product).select().single()
@@ -84,6 +87,7 @@ export async function updateProduct(id: string, updates: Partial<{
   image_url: string
   images: string[]
   description: string
+  category: string
 }>) {
   const supabase = getSupabaseClient()
   return supabase.from('products').update(updates).eq('id', id).select().single()
@@ -131,13 +135,15 @@ export async function getDashboardMetrics(storeId: string) {
   today.setHours(0, 0, 0, 0)
 
   const paidStatuses = ['confirmed', 'done']
+  const todayStr = today.toISOString().split('T')[0]
 
-  const [ordersRes, todayPaidRes, todayNewRes, productsRes, chatRes] = await Promise.all([
+  const [ordersRes, todayPaidRes, todayNewRes, productsRes, chatRes, viewsRes] = await Promise.all([
     supabase.from('orders').select('total').eq('store_id', storeId).in('status', paidStatuses),
     supabase.from('orders').select('id, total').eq('store_id', storeId).gte('created_at', today.toISOString()).in('status', paidStatuses),
     supabase.from('orders').select('id').eq('store_id', storeId).gte('created_at', today.toISOString()).eq('status', 'new'),
     supabase.from('products').select('id, stock').eq('store_id', storeId).eq('is_active', true),
     supabase.from('chat_logs').select('id, sender').eq('store_id', storeId).gte('created_at', today.toISOString()),
+    supabase.from('store_views').select('id', { count: 'exact', head: true }).eq('store_id', storeId).eq('view_date', todayStr),
   ])
 
   const totalRevenue = ordersRes.data?.reduce((sum: number, o: any) => sum + o.total, 0) ?? 0
@@ -149,6 +155,7 @@ export async function getDashboardMetrics(storeId: string) {
   const todayChats = chatRes.data?.length ?? 0
   const autoReplied = chatRes.data?.filter((c: any) => c.sender === 'bot').length ?? 0
   const autoReplyRate = todayChats > 0 ? Math.round((autoReplied / todayChats) * 100) : 0
+  const todayViews = viewsRes.count ?? 0
 
   return {
     totalRevenue,
@@ -159,6 +166,7 @@ export async function getDashboardMetrics(storeId: string) {
     lowStockProducts,
     todayChats,
     autoReplyRate,
+    todayViews,
   }
 }
 
