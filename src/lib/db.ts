@@ -12,7 +12,7 @@ export async function getStoreBySlug(slug: string) {
 
 export async function getStoreByUserId(userId: string) {
   const supabase = getSupabaseClient()
-  return supabase.from('stores').select('*').eq('user_id', userId).single()
+  return supabase.from('stores').select('*').eq('user_id', userId).limit(1).maybeSingle()
 }
 
 export async function createStore(store: {

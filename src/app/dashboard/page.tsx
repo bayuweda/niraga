@@ -53,7 +53,8 @@ export default function DashboardPage() {
 
     async function load() {
       if (!user) return
-      const { data: storeData } = await getStoreByUserId(user.id)
+      const { data: storeData, error: storeErr } = await getStoreByUserId(user.id)
+      if (storeErr) console.error('Gagal ambil toko:', storeErr)
       if (!storeData) {
         setLoading(false)
         return
