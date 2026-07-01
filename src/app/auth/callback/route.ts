@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const error = searchParams.get('error')
-  const next = searchParams.get('next') ?? '/dashboard'
+  const redirect = searchParams.get('redirect') ?? '/dashboard'
 
   if (error) {
     return NextResponse.redirect(`${origin}/login`)
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-    const response = NextResponse.redirect(`${origin}${next}`)
+    const response = NextResponse.redirect(`${origin}${redirect}`)
 
     const supabase = createServerClient(supabaseUrl, supabaseKey, {
       cookies: {

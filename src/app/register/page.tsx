@@ -1,9 +1,18 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { useAuth } from '@/lib/store'
 
 export default function RegisterPage() {
   const { signInWithGoogle, loading } = useAuth()
+  const redirectRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    redirectRef.current = params.get('redirect')
+  }, [])
+
+  const handleSignIn = () => signInWithGoogle(redirectRef.current || undefined)
 
   return (
     <main className="min-h-screen bg-gray-50 pt-16">
@@ -20,7 +29,7 @@ export default function RegisterPage() {
 
           <div className="bg-white border border-gray-200 rounded-3xl p-8">
             <button
-              onClick={signInWithGoogle}
+              onClick={handleSignIn}
               disabled={loading}
               className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -35,7 +44,7 @@ export default function RegisterPage() {
 
             <div className="text-center mt-6 text-sm text-gray-500">
               Sudah punya akun?{' '}
-              <a href="/login" className="text-green-600 font-semibold hover:text-green-700">
+              <a href={redirectRef.current ? `/login?redirect=${encodeURIComponent(redirectRef.current)}` : '/login'} className="text-green-600 font-semibold hover:text-green-700">
                 Masuk
               </a>
             </div>

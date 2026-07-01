@@ -1,16 +1,27 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store'
 
 export default function LoginPage() {
   const router = useRouter()
   const { user, initialized, signInWithGoogle, loading } = useAuth()
+  const redirectRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (initialized && user) router.push('/dashboard')
+    const params = new URLSearchParams(window.location.search)
+    redirectRef.current = params.get('redirect')
+  }, [])
+
+  useEffect(() => {
+    if (initialized && user) {
+      const params = new URLSearchParams(window.location.search)
+      router.push(params.get('redirect') || '/dashboard')
+    }
   }, [initialized, user])
+
+  const handleSignIn = () => signInWithGoogle(redirectRef.current || undefined)
 
   return (
     <main className="min-h-screen bg-gray-50 pt-16">
@@ -27,7 +38,7 @@ export default function LoginPage() {
 
           <div className="bg-white border border-gray-200 rounded-3xl p-8">
             <button
-              onClick={signInWithGoogle}
+              onClick={handleSignIn}
               disabled={loading}
               className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
