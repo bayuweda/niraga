@@ -7,6 +7,14 @@ import LoadingBar from '@/components/ui/LoadingBar'
 import Navbar from '@/components/ui/Navbar'
 import AuthInit from '@/components/ui/AuthInit'
 
+export const metadata: Metadata = {
+  title: 'Niraga - Katalog WA untuk Toko Online',
+  description: 'Buat katalog WA toko online kamu dalam 2 menit. Gratis selamanya.',
+  icons: {
+    icon: '/favicon.svg',
+  },
+}
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800', '900'],

@@ -9,12 +9,16 @@ export async function GET(request: NextRequest) {
   const redirect = searchParams.get('redirect') ?? '/dashboard'
 
   if (error) {
-    return NextResponse.redirect(`${origin}/login`)
+    return NextResponse.redirect(`${origin}/login?error=akun_tidak_terautentikasi`)
   }
 
   if (code) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.redirect(`${origin}/login?error=konfigurasi_server`)
+    }
 
     const response = NextResponse.redirect(`${origin}${redirect}`)
 
@@ -33,11 +37,11 @@ export async function GET(request: NextRequest) {
 
     const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
     if (exchangeError) {
-      return NextResponse.redirect(`${origin}/login`)
+      return NextResponse.redirect(`${origin}/login?error=gagal_tukar_kode`)
     }
 
     return response
   }
 
-  return NextResponse.redirect(`${origin}/login`)
+  return NextResponse.redirect(`${origin}/login?error=kode_kosong`)
 }

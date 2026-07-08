@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   if (!isCallback && isDashboardRoute && !user) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    url.searchParams.set('redirect', pathname)
+    url.searchParams.set('redirect', pathname + request.nextUrl.search)
     return NextResponse.redirect(url)
   }
 

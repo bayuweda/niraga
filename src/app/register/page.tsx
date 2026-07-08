@@ -1,18 +1,44 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/store'
 
+const errorMessages: Record<string, string> = {
+  akun_tidak_terautentikasi: 'Gagal masuk. Silakan coba lagi.',
+  gagal_tukar_kode: 'Sesi tidak valid. Silakan coba lagi.',
+  kode_kosong: 'Tidak ada kode autentikasi. Silakan coba lagi.',
+  konfigurasi_server: 'Terjadi kesalahan server. Hubungi admin.',
+}
+
 export default function RegisterPage() {
-  const { signInWithGoogle, loading } = useAuth()
+  const router = useRouter()
+  const { user, initialized, signInWithGoogle, loading } = useAuth()
   const redirectRef = useRef<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     redirectRef.current = params.get('redirect')
+    const err = params.get('error')
+    if (err && errorMessages[err]) {
+      setErrorMsg(errorMessages[err])
+    }
   }, [])
 
-  const handleSignIn = () => signInWithGoogle(redirectRef.current || undefined)
+  useEffect(() => {
+    if (initialized && user) {
+      router.push('/dashboard')
+    }
+  }, [initialized, user])
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle(redirectRef.current || undefined)
+    } catch {
+      setErrorMsg('Gagal terhubung ke Google. Cek koneksi internet dan coba lagi.')
+    }
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 pt-16">
@@ -26,6 +52,12 @@ export default function RegisterPage() {
               Setup toko dalam 5 menit — Gratis selamanya
             </p>
           </div>
+
+          {errorMsg && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3.5 mb-4 text-center font-medium">
+              {errorMsg}
+            </div>
+          )}
 
           <div className="bg-white border border-gray-200 rounded-3xl p-8">
             <button

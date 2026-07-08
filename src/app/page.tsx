@@ -203,7 +203,7 @@ export default function Home() {
             {[
               { ic: <Icon.Zap size={24} />, t: 'Setup 2 menit', d: 'Tidak perlu daftar dulu. Langsung buat toko, tambah produk, dan share link — semua dalam hitungan menit.' },
               { ic: <Icon.Star size={24} />, t: 'Gratis selamanya', d: 'Fitur utama gratis tanpa batas. Tidak ada trial, tidak ada kartu kredit, tidak ada biaya tersembunyi.' },
-              { ic: <Icon.Link size={24} />, t: 'Link toko sendiri', d: 'Dapat link niraga.vercel.app/namatoko-mu yang bisa ditempel di bio IG, WA, atau dikirim langsung ke pelanggan.' },
+              { ic: <Icon.Link size={24} />, t: 'Link toko sendiri', d: 'Dapat link niraga.online/namatoko-mu yang bisa ditempel di bio IG, WA, atau dikirim langsung ke pelanggan.' },
               { ic: <Icon.Sparkles size={24} />, t: 'Tampil keren di HP', d: 'Toko kamu otomatis tampil bagus di layar HP pelanggan — seperti app sungguhan, tanpa mereka harus install apapun.' },
             ].map((w, i) => (
               <div key={i} className="why-card">

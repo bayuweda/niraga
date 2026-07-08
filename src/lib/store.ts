@@ -113,7 +113,11 @@ export const useAuth = create<AuthState>((set) => ({
       provider: 'google',
       options: { redirectTo },
     })
-    if (error) console.error('Google sign-in error:', error.message)
+    if (error) {
+      console.error('Google sign-in error:', error.message)
+      set({ loading: false })
+      throw error
+    }
     set({ loading: false })
   },
 

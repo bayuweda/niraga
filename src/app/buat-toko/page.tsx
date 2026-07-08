@@ -35,10 +35,9 @@ export default function BuatTokoPage() {
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short' | 'error'>('idle')
   const manualUsername = useRef(false)
 
-  // Initialize auth + restore wizard data after login/register redirect
   useEffect(() => {
-    initialize()
-    if (typeof window !== 'undefined') {
+    ;(async () => {
+      await initialize()
       try {
         const savedStore = sessionStorage.getItem('niraga_wizard_store')
         const savedProducts = sessionStorage.getItem('niraga_wizard_products')
@@ -49,7 +48,7 @@ export default function BuatTokoPage() {
         }
         if (savedProducts) setProducts(JSON.parse(savedProducts))
       } catch {}
-    }
+    })()
   }, [])
 
   const saveWizardData = () => {
@@ -60,7 +59,7 @@ export default function BuatTokoPage() {
   // Auto-slugify username from store name
   useEffect(() => {
     if (!manualUsername.current) {
-      const slug = store.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+      const slug = store.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').replace(/-+/g, '-')
       setStore(prev => ({ ...prev, username: slug }))
     }
   }, [store.name])
@@ -87,7 +86,7 @@ export default function BuatTokoPage() {
   }, [store.username])
 
   const steps = ['Info Toko', 'Produk', 'Preview & Link']
-  const fileInputRef = { current: null as any }
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const addProduct = () => {
     if (!newProd.name || !newProd.price) return
@@ -133,11 +132,11 @@ export default function BuatTokoPage() {
 
   const handleCreateStore = async () => {
     if (!initialized) {
-      toast.loading('Memeriksa sesi...')
-      return
+      await initialize()
     }
 
-    if (!user) {
+    const state = useAuth.getState()
+    if (!state.user) {
       saveWizardData()
       router.push(`/register?redirect=/buat-toko`)
       return
@@ -146,7 +145,7 @@ export default function BuatTokoPage() {
     setSaving(true)
     try {
       const { data: newStore, error } = await createStore({
-        user_id: user.id,
+        user_id: state.user.id,
         name: store.name,
         slug,
         whatsapp: store.wa || undefined,
@@ -166,7 +165,7 @@ export default function BuatTokoPage() {
         const { error: prodErr } = await createProduct({
           store_id: newStore.id,
           name: p.name,
-          price: parseInt(p.price),
+          price: Math.max(1, parseInt(p.price) || 0),
           unit: p.unit,
           emoji: p.emoji || '📦',
           image_url: p.imageBase64 || undefined,
@@ -263,7 +262,7 @@ export default function BuatTokoPage() {
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Link Toko *</label>
                 <div className="flex flex-col gap-1.5">
-                  <div className="text-xs text-muted font-medium px-1 break-all">niraga.vercel.app/toko/</div>
+                  <div className="text-xs text-muted font-medium px-1 break-all">niraga.online/toko/</div>
                   <input
                     type="text"
                     maxLength={30}
