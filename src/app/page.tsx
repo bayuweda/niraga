@@ -68,40 +68,41 @@ export default function Home() {
 
               {/* RIGHT - Phone Mockup */}
               <div className="flex justify-center items-center relative">
-                <div className="phone-frame w-[252px] lg:w-[296px] pt-[12%] pb-[8%] px-[5%]">
-                <div className="phone-mock w-full">
-                  <div className="phone-bar">
-                    <div className="phone-store-info">
-                      <div className="phone-av"><Icon.Store size={18} className="text-white" /></div>
+                <div className="phone-frame relative w-[252px] lg:w-[296px]">
+                  <img src="/—Pngtree—mobile phone frame photo_19752447.png" alt="Phone frame" className="w-full block" />
+                  <div className="absolute inset-[10%] bg-white rounded-[20px] flex flex-col overflow-hidden p-3 sm:p-4">
+                    <div className="phone-bar flex-shrink-0">
+                      <div className="phone-store-info">
+                        <div className="phone-av"><Icon.Store size={18} className="text-white" /></div>
+                        <div>
+                          <div className="phone-sname">Dapur Dinda</div>
+                          <div className="phone-ssub">4 produk tersedia</div>
+                        </div>
+                      </div>
+                      <div className="phone-share"><Icon.Link size={18} /></div>
+                    </div>
+                    <div className="phone-products flex-1 min-h-0">
+                      {[
+                        { img: '/assets/siomay.png', n: 'Siomay Frozen', p: '45.000' },
+                        { img: '/assets/bakso.png', n: 'Bakso Sapi', p: '55.000' },
+                        { img: '/assets/udang.jpg', n: 'Udang Crispy', p: '65.000' },
+                        { img: '/assets/nugget.png', n: 'Nugget Ayam', p: '42.000' },
+                      ].map((p, i) => (
+                        <div key={i} className="phone-prod">
+                          <div className="phone-prod-emoji"><img src={p.img} alt={p.n} loading="lazy" className="w-full aspect-square rounded-lg object-contain" /></div>
+                          <div className="phone-prod-name">{p.n}</div>
+                          <div className="phone-prod-price">Rp {p.p}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="phone-cart flex-shrink-0">
                       <div>
-                        <div className="phone-sname">Dapur Dinda</div>
-                        <div className="phone-ssub">4 produk tersedia</div>
+                        <div className="phone-cart-t">2 produk dipilih</div>
+                        <div className="phone-cart-s">Total Rp 100.000</div>
                       </div>
+                      <div className="phone-cart-btn">Pesan via WA</div>
                     </div>
-                    <div className="phone-share"><Icon.Link size={18} /></div>
                   </div>
-                  <div className="phone-products">
-                    {[
-                      { img: '/assets/siomay.png', n: 'Siomay Frozen', p: '45.000' },
-                      { img: '/assets/bakso.png', n: 'Bakso Sapi', p: '55.000' },
-                      { img: '/assets/udang.jpg', n: 'Udang Crispy', p: '65.000' },
-                      { img: '/assets/nugget.png', n: 'Nugget Ayam', p: '42.000' },
-                    ].map((p, i) => (
-                      <div key={i} className="phone-prod">
-                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} loading="lazy" className="w-full aspect-square rounded-lg object-contain" /></div>
-                        <div className="phone-prod-name">{p.n}</div>
-                        <div className="phone-prod-price">Rp {p.p}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="phone-cart">
-                    <div>
-                      <div className="phone-cart-t">2 produk dipilih</div>
-                      <div className="phone-cart-s">Total Rp 100.000</div>
-                    </div>
-                    <div className="phone-cart-btn">Pesan via WA</div>
-                  </div>
-                </div>
                 </div>
 
                 {/* WA Float */}

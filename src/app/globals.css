@@ -129,12 +129,6 @@
     animation: float 6s ease-in-out infinite;
   }
 
-  .phone-mock {
-    @apply bg-white rounded-[32px] p-5
-           shadow-card-lg border border-gray-200
-           animate-none;
-  }
-
   .phone-bar {
     @apply flex items-center justify-between mb-4 pb-3 
            border-b border-gray-200;
