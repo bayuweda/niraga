@@ -68,8 +68,7 @@ export default function Home() {
 
               {/* RIGHT - Phone Mockup */}
               <div className="flex justify-center items-center relative">
-                <div className="phone-frame w-[252px] lg:w-[296px]">
-                <div className="phone-notch" />
+                <div className="phone-frame w-[252px] lg:w-[296px] pt-[12%] pb-[8%] px-[5%]">
                 <div className="phone-mock w-full">
                   <div className="phone-bar">
                     <div className="phone-store-info">
