@@ -237,7 +237,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
                 >
                   <div className="w-full aspect-square relative overflow-hidden" style={{ background: firstImg ? '#f3f4f6' : p.bg_color }}>
                     {firstImg ? (
-                      <img src={firstImg} alt={p.name} className="w-full h-full object-contain p-1" />
+                      <img src={firstImg} alt={p.name} className="w-full h-full object-contain" />
                     ) : (
                       <>
                         <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.3) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
