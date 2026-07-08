@@ -295,11 +295,11 @@ export default function BuatTokoPage() {
                 <input
                   type="text"
                   value={store.wa}
-                  onChange={e => setStore({ ...store, wa: e.target.value })}
+                  onChange={e => setStore({ ...store, wa: e.target.value.replace(/[^0-9+]/g, '') })}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
-                  placeholder="cth: 08123456789"
+                  placeholder="cth: +628123456789"
                 />
-                <div className="text-[11px] text-gray-500 mt-1.5">Order dari pelanggan akan masuk ke nomor ini.</div>
+                <div className="text-[11px] text-gray-500 mt-1.5">Gunakan format +62, jangan diawali 0. Contoh: <span className="font-semibold">+628123456789</span></div>
               </div>
 
               <div>

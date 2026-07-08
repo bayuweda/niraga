@@ -92,7 +92,8 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
 
   const orderWA = async () => {
     if (!store || !customerName.trim()) return
-    const wa = store.whatsapp?.replace(/[^0-9]/g, '') || ''
+    let wa = (store.whatsapp || '').replace(/[^0-9]/g, '')
+    if (wa.startsWith('0')) wa = '62' + wa.slice(1)
     if (!wa) { alert('Nomor WhatsApp belum diatur'); return }
     setSending(true)
 
@@ -275,7 +276,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
             <div className="text-xs text-gray-500">Chat langsung sebelum order, kami siap bantu!</div>
           </div>
           <button
-            onClick={() => window.open(`https://wa.me/${store.whatsapp?.replace(/[^0-9]/g, '') || ''}`, '_blank')}
+            onClick={() => { const w = (store.whatsapp || '').replace(/[^0-9]/g, ''); window.open(`https://wa.me/${w.startsWith('0') ? '62' + w.slice(1) : w}`, '_blank') }}
             className="flex-shrink-0 py-2.5 px-4 bg-green-600 text-white rounded-xl font-bold text-xs hover:bg-green-700 transition-all"
           >
             Chat WA
