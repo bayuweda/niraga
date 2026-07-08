@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { formatRupiah } from '@/lib/utils'
@@ -34,6 +34,7 @@ export default function BuatTokoPage() {
   const [saving, setSaving] = useState(false)
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'too-short' | 'error'>('idle')
   const manualUsername = useRef(false)
+  const autoSaveAttempted = useRef(false)
 
   useEffect(() => {
     ;(async () => {
@@ -47,6 +48,12 @@ export default function BuatTokoPage() {
           if (parsed.username) manualUsername.current = true
         }
         if (savedProducts) setProducts(JSON.parse(savedProducts))
+
+        const state = useAuth.getState()
+        if (state.user && savedStore && !autoSaveAttempted.current) {
+          autoSaveAttempted.current = true
+          setTimeout(handleCreateStore, 300)
+        }
       } catch {}
     })()
   }, [])
