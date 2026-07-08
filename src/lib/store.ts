@@ -106,9 +106,10 @@ export const useAuth = create<AuthState>((set) => ({
       set({ loading: false })
       return
     }
+    const origin = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || 'https://niraga.online')
     const redirectTo = redirect
-      ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`
-      : `${window.location.origin}/auth/callback`
+      ? `${origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`
+      : `${origin}/auth/callback`
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo },
