@@ -146,7 +146,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
         <div className="bg-white border-b border-gray-200 mb-4">
           {store.banner_url ? (
             <div className="h-[120px] relative overflow-hidden bg-gray-100">
-              <img src={store.banner_url} alt="" className="w-full h-full object-cover" />
+              <img src={store.banner_url} alt={`Banner ${store.name}`} loading="lazy" className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="h-[88px] relative" style={{ background: `linear-gradient(135deg, ${theme.primary}, ${theme.primary}cc)` }}>

@@ -82,7 +82,7 @@ export default function ContohPage() {
               <div key={p.id} onClick={() => toggleProduct(p.id)}
                 className={`bg-white border-2 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 relative ${cart[p.id] ? 'border-green-500 shadow-[0_0_0_3px_rgba(22,163,74,.12)]' : 'border-gray-200 hover:border-green-200 hover:shadow-[0_6px_20px_rgba(22,163,74,.1)] hover:-translate-y-0.5'}`}>
                 <div className="w-full aspect-square bg-gray-50 overflow-hidden">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-contain p-1" />
+                  <img src={p.image} alt={p.name} loading="lazy" className="w-full h-full object-contain p-1" />
                 </div>
                 <div className={`absolute top-2 right-2 w-[22px] h-[22px] rounded-full bg-green-600 text-white flex items-center justify-center transition-all duration-200 ${cart[p.id] ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.6]'}`}><Icon.Check size={14} /></div>
                 <div className="p-2.5">

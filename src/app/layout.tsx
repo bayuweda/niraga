@@ -7,11 +7,29 @@ import LoadingBar from '@/components/ui/LoadingBar'
 import Navbar from '@/components/ui/Navbar'
 import AuthInit from '@/components/ui/AuthInit'
 
+const SITE_URL = 'https://niraga.online'
+
 export const metadata: Metadata = {
-  title: 'Niraga - Katalog WA untuk Toko Online',
+  title: { default: 'Niraga - Katalog WA untuk Toko Online', template: '%s | Niraga' },
   description: 'Buat katalog WA toko online kamu dalam 2 menit. Gratis selamanya.',
-  icons: {
-    icon: '/favicon.svg',
+  icons: { icon: '/favicon.svg' },
+  openGraph: {
+    type: 'website',
+    siteName: 'Niraga',
+    title: 'Niraga - Katalog WA untuk Toko Online',
+    description: 'Buat katalog WA toko online kamu dalam 2 menit. Gratis selamanya.',
+    url: SITE_URL,
+    locale: 'id_ID',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Niraga - Katalog WA untuk Toko Online',
+    description: 'Buat katalog WA toko online kamu dalam 2 menit. Gratis selamanya.',
+  },
+  alternates: { canonical: SITE_URL },
+  robots: { index: true, follow: true },
+  other: {
+    'theme-color': '#16a34a',
   },
 }
 
@@ -29,6 +47,21 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${poppins.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'Niraga',
+              applicationCategory: 'BusinessApplication',
+              description: 'Buat katalog WA toko online dalam 2 menit. Gratis selamanya.',
+              url: SITE_URL,
+              operatingSystem: 'Web',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'IDR' },
+            }),
+          }}
+        />
         <AuthInit />
         <Suspense fallback={null}>
           <LoadingBar />

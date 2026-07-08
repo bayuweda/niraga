@@ -89,7 +89,7 @@ export default function Home() {
                       { img: '/assets/nugget.png', n: 'Nugget Ayam', p: '42.000' },
                     ].map((p, i) => (
                       <div key={i} className="phone-prod">
-                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} className="w-full aspect-square rounded-lg object-contain" /></div>
+                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} loading="lazy" className="w-full aspect-square rounded-lg object-contain" /></div>
                         <div className="phone-prod-name">{p.n}</div>
                         <div className="phone-prod-price">Rp {p.p}</div>
                       </div>
@@ -342,7 +342,7 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-gray-50 border-t border-gray-200 py-8">
         <div className="container-app flex justify-between items-center flex-wrap gap-4">
-          <img src="/niraga-logo-full.svg" alt="Niraga" className="h-9" />
+          <img src="/niraga-logo-full.svg" alt="Niraga logo" loading="lazy" className="h-9" />
           <div className="text-xs text-gray-400">
             © 2025 Niraga. Dibuat dengan love untuk UMKM Indonesia.
           </div>
