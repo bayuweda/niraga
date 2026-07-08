@@ -37,10 +37,10 @@ export default function ContohPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-16">
+    <main className="min-h-screen bg-gray-100 pt-16">
       <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
-        <div className="bg-white border-b border-gray-200 mb-4">
+        <header className="bg-white border-b border-gray-200 mb-4">
           <div className="h-[88px] bg-gradient-to-r from-green-600 to-green-500 relative">
             <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
           </div>
@@ -50,7 +50,7 @@ export default function ContohPage() {
             </div>
           </div>
           <div className="text-center px-5 pt-3 pb-5">
-            <div className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">Dapur Dinda</div>
+            <h1 className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">Dapur Dinda</h1>
             <div className="text-xs text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-3.5">Frozen food homemade berkualitas, dibuat fresh setiap hari.</div>
             <div className="flex gap-1.5 justify-center flex-wrap">
               {['Terpercaya', 'COD & Ongkir', 'Respon Cepat'].map(t => (
@@ -62,7 +62,7 @@ export default function ContohPage() {
               <span className="text-[11px] text-gray-500 font-medium">47 orang melihat toko ini hari ini</span>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* SHIPPING INFO */}
         <div className="px-3.5 mb-4">
@@ -119,7 +119,7 @@ export default function ContohPage() {
       </div>
 
       {/* CART BAR */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-white border-t-2 border-gray-200 p-3.5 z-50">
+      <footer className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-white border-t-2 border-gray-200 p-3.5 z-50">
         {totalQty === 0 ? (
           <div className="text-center py-3 text-xs text-muted">👆 Tap produk untuk memilih</div>
         ) : (
@@ -136,7 +136,7 @@ export default function ContohPage() {
             </button>
           </>
         )}
-      </div>
-    </div>
+      </footer>
+    </main>
   )
 }

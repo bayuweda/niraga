@@ -209,7 +209,7 @@ export default function BuatTokoPage() {
   const canContinue = store.name && store.wa && store.username && usernameStatus === 'available'
 
   return (
-    <div className="min-h-screen bg-cream pt-16">
+    <main className="min-h-screen bg-cream pt-16">
       {/* HEADER */}
       <div className="text-center pt-10 md:pt-16 pb-0 px-4">
         <div className="tag-pill mb-3.5 w-fit mx-auto">
@@ -489,6 +489,6 @@ export default function BuatTokoPage() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   )
 }

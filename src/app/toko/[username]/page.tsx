@@ -140,10 +140,10 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <main className="min-h-screen bg-gray-100">
       <div className="max-w-[440px] mx-auto pb-32">
         {/* STORE HEADER */}
-        <div className="bg-white border-b border-gray-200 mb-4">
+        <header className="bg-white border-b border-gray-200 mb-4">
           {store.banner_url ? (
             <div className="h-[120px] relative overflow-hidden bg-gray-100">
               <img src={store.banner_url} alt={`Banner ${store.name}`} loading="lazy" className="w-full h-full object-cover" />
@@ -165,7 +165,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
           </div>
 
           <div className="text-center px-5 pt-3 pb-5">
-            <div className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">{store.name}</div>
+            <h1 className="font-display font-bold text-[22px] text-gray-900 mb-1 tracking-tight">{store.name}</h1>
             {store.description && (
               <div className="text-xs text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-3.5">{store.description}</div>
             )}
@@ -185,7 +185,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               </div>
             )}
           </div>
-        </div>
+        </header>
 
         {/* SHIPPING INFO */}
         {store.shipping_info && (
@@ -470,6 +470,6 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
           </div>
         </div>
       )}
-    </div>
+    </main>
   )
 }
