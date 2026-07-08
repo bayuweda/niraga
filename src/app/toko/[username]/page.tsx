@@ -20,7 +20,6 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const [showForm, setShowForm] = useState(false)
   const [showCart, setShowCart] = useState(false)
   const [customerName, setCustomerName] = useState('')
-  const [customerWA, setCustomerWA] = useState('')
   const [customerNotes, setCustomerNotes] = useState('')
   const [sending, setSending] = useState(false)
   const [todayViews, setTodayViews] = useState<number>(0)
@@ -87,7 +86,6 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
   const openCheckout = () => {
     setShowCart(false)
     setCustomerName('')
-    setCustomerWA('')
     setCustomerNotes('')
     setShowForm(true)
   }
@@ -101,16 +99,14 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
     await createOrder({
       store_id: store.id,
       customer_name: customerName.trim(),
-      customer_contact: customerWA.trim() || undefined,
       notes: customerNotes.trim() || undefined,
       items: cartItems.map(p => ({ product_id: p.id, name: p.name, qty: cart[p.id], price: p.price })),
       total,
     })
 
     const lines = cartItems.map(p => `• ${p.name} × ${cart[p.id]} — ${formatRupiah(p.price * cart[p.id])}`).join('\n')
-    const waNote = customerWA.trim() ? `\nWA: ${customerWA.trim()}` : ''
     const notes = customerNotes.trim() ? `\n\nCatatan: ${customerNotes.trim()}` : ''
-    const msg = encodeURIComponent(`Halo ${store.name}! 👋\n\nSaya ${customerName.trim()} mau pesan:\n${lines}\n\nTotal: ${formatRupiah(total)}${waNote}${notes}\n\nMohon konfirmasinya ya kak 🙏`)
+    const msg = encodeURIComponent(`Halo ${store.name}! 👋\n\nSaya ${customerName.trim()} mau pesan:\n${lines}\n\nTotal: ${formatRupiah(total)}${notes}\n\nMohon konfirmasinya ya kak 🙏`)
 
     setSending(false)
     setShowForm(false)
@@ -170,13 +166,14 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               <div className="text-xs text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-3.5">{store.description}</div>
             )}
             <div className="flex gap-1.5 justify-center flex-wrap">
-              {[{ icon: Icon.Check, label: 'Terpercaya' }, { icon: Icon.Truck, label: 'COD & Ongkir' }, { icon: Icon.Zap, label: 'Respon Cepat' }].map(({ icon: TagIcon, label }) => (
-                <div key={label}
-                  className="text-[10px] font-bold rounded-full px-2.5 py-1 flex items-center gap-1"
-                  style={{ color: theme.primary, background: theme.light, border: `1px solid ${theme.border}` }}>
-                  <TagIcon size={10} /> {label}
-                </div>
-              ))}
+              <div className="text-[10px] font-bold rounded-full px-2.5 py-1 flex items-center gap-1"
+                style={{ color: theme.primary, background: theme.light, border: `1px solid ${theme.border}` }}>
+                <Icon.Check size={10} /> Terpercaya
+              </div>
+              <div className="text-[10px] font-bold rounded-full px-2.5 py-1 flex items-center gap-1"
+                style={{ color: theme.primary, background: theme.light, border: `1px solid ${theme.border}` }}>
+                <Icon.Zap size={10} /> Respon Cepat
+              </div>
             </div>
             {todayViews > 0 && (
               <div className="flex items-center justify-center gap-1.5 mt-2">
@@ -193,17 +190,6 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
             <div className="flex items-start gap-2.5 bg-warm border border-border rounded-xl px-3.5 py-3">
               <div className="flex-shrink-0 mt-0.5"><Icon.Truck size={14} className="text-muted" /></div>
               <div className="text-[11px] text-body leading-relaxed">{store.shipping_info}</div>
-            </div>
-          </div>
-        )}
-
-        {/* PAYMENT INFO */}
-        {(store.payment_info || store.qris_url) && (
-          <div className="px-3.5 mb-4">
-            <div className="bg-white border border-gray-200 rounded-xl px-3.5 py-3">
-              <div className="text-[11px] font-bold text-gray-500 mb-2">💳 Pembayaran</div>
-              {store.payment_info && <div className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line mb-3">{store.payment_info}</div>}
-              {store.qris_url && <img src={store.qris_url} alt="QRIS" className="w-36 h-36 object-cover rounded-xl border border-gray-200" />}
             </div>
           </div>
         )}
@@ -279,6 +265,21 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
               )
             })}
           </div>
+        </div>
+
+        {/* CHAT DULU */}
+        <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-2xl p-4 mx-3.5 mb-5">
+          <div className="flex-shrink-0"><Icon.Chat size={24} className="text-gray-400" /></div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-gray-900 mb-0.5">Mau tanya dulu?</div>
+            <div className="text-xs text-gray-500">Chat langsung sebelum order, kami siap bantu!</div>
+          </div>
+          <button
+            onClick={() => window.open(`https://wa.me/${store.whatsapp?.replace(/[^0-9]/g, '') || ''}`, '_blank')}
+            className="flex-shrink-0 py-2.5 px-4 bg-green-600 text-white rounded-xl font-bold text-xs hover:bg-green-700 transition-all"
+          >
+            Chat WA
+          </button>
         </div>
 
         <div style={{ height: totalQty > 0 ? 120 : 60 }} />
@@ -444,13 +445,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
                   placeholder="cth: Siti Nurhaliza" />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1.5">No. WhatsApp <span className="text-gray-400 font-normal">(opsional)</span></label>
-                <input type="text" value={customerWA} onChange={e => setCustomerWA(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                  placeholder="cth: 08123456789" />
-                <div className="text-[11px] text-gray-400 mt-1">Supaya penjual bisa hubungi kamu balik</div>
-              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">Catatan <span className="text-gray-400 font-normal">(opsional)</span></label>
                 <textarea value={customerNotes} onChange={e => setCustomerNotes(e.target.value)}

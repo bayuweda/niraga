@@ -124,9 +124,45 @@
 
   .phone-frame {
     position: relative;
-    background: url('/—Pngtree—mobile phone frame photo_19752447.png') no-repeat center center;
-    background-size: 100% 100%;
+    background: #1a1a2e;
+    border-radius: 48px;
+    padding: 16px 10px;
+    box-shadow:
+      0 0 0 2px #2a2a3e,
+      0 0 0 5px #0f0f1a,
+      0 20px 60px rgba(0,0,0,.25),
+      inset 0 0 0 1px rgba(255,255,255,.06);
     animation: float 6s ease-in-out infinite;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 28px;
+    background: #1a1a2e;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+  }
+
+  .phone-notch::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #2a2a3e;
+    border-radius: 50%;
+  }
+
+  .phone-mock {
+    @apply bg-white rounded-[32px] p-5
+           shadow-card-lg border border-gray-200
+           animate-none;
   }
 
   .phone-bar {
