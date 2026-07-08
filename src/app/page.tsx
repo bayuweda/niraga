@@ -89,7 +89,7 @@ export default function Home() {
                       { img: '/assets/nugget.png', n: 'Nugget Ayam', p: '42.000' },
                     ].map((p, i) => (
                       <div key={i} className="phone-prod">
-                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} className="w-full aspect-square rounded-lg object-cover" /></div>
+                        <div className="phone-prod-emoji"><img src={p.img} alt={p.n} className="w-full aspect-square rounded-lg object-contain" /></div>
                         <div className="phone-prod-name">{p.n}</div>
                         <div className="phone-prod-price">Rp {p.p}</div>
                       </div>

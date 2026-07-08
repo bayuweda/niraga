@@ -118,7 +118,7 @@ export default function SettingsPage() {
                 }} />
                 {form.bannerBase64 ? (
                   <div className="relative mb-2">
-                    <img src={form.bannerBase64} alt="Banner" className="w-full h-24 object-cover rounded-xl border border-gray-200" />
+                    <img src={form.bannerBase64} alt="Banner" className="w-full h-24 object-contain rounded-xl border border-gray-200" />
                     <button onClick={() => { setForm({ ...form, bannerBase64: '' }); setBannerRemoved(true) }}
                       className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600">×</button>
                   </div>
