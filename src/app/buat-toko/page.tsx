@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { formatRupiah } from '@/lib/utils'
 import { useAuth } from '@/lib/store'
 import { getSupabaseClient } from '@/lib/supabase'
-import { createStore, createProduct } from '@/lib/db'
+import { createStore, createProduct, ensureProfile } from '@/lib/db'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 import { STORE_THEMES } from '@/lib/themes'
 
@@ -167,6 +167,9 @@ export default function BuatTokoPage() {
 
     setSaving(true)
     try {
+      const { error: profileErr } = await ensureProfile(state.user.id, state.user.email)
+      if (profileErr) console.error('Gagal sync profile:', profileErr)
+
       const { data: newStore, error } = await createStore({
         user_id: state.user.id,
         name: wizardStore.name,
