@@ -7,6 +7,7 @@ import { getSupabaseClient } from '@/lib/supabase'
 import { Icon, WhatsAppIcon } from '@/components/ui/Icons'
 import { getThemeByColor } from '@/lib/themes'
 import type { Store, Product } from '@/lib/types'
+import { toast } from 'sonner'
 
 export default function StorePage({ params }: { params: Promise<{ username: string }> }) {
   const { username: slug } = use(params)
@@ -94,7 +95,7 @@ export default function StorePage({ params }: { params: Promise<{ username: stri
     if (!store || !customerName.trim()) return
     let wa = (store.whatsapp || '').replace(/[^0-9]/g, '')
     if (wa.startsWith('0')) wa = '62' + wa.slice(1)
-    if (!wa) { alert('Nomor WhatsApp belum diatur'); return }
+    if (!wa) { toast.error('Nomor WhatsApp belum diatur'); return }
     setSending(true)
 
     await createOrder({

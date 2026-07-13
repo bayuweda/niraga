@@ -28,7 +28,8 @@ export default function ProdukPage() {
 
     async function load() {
       if (!user) return
-      const { data: storeData } = await getStoreByUserId(user.id)
+      const { data: storeData, error: storeErr } = await getStoreByUserId(user.id)
+      if (storeErr) toast.error('Gagal memuat data toko')
       if (!storeData) { setLoading(false); return }
       setStore(storeData)
       const { data: productsData } = await getProductsByStoreId(storeData.id, true)

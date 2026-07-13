@@ -31,7 +31,8 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (initialized && user) {
-      router.push('/dashboard')
+      const params = new URLSearchParams(window.location.search)
+      router.push(params.get('redirect') || '/dashboard')
     }
   }, [initialized, user])
 
@@ -46,12 +47,13 @@ export default function RegisterPage() {
   const handleEmailSignUp = async () => {
     if (!email || !password) return
     setErrorMsg(null)
-    const { error } = await signUp(email, password)
+    const { error } = await signUp(email, password, redirectRef.current || '/buat-toko')
     if (error) {
       setErrorMsg(error.message || 'Gagal daftar. Coba lagi.')
     } else {
       setErrorMsg(null)
-      router.push('/login')
+      const redirect = redirectRef.current ? `?redirect=${encodeURIComponent(redirectRef.current)}` : ''
+      router.push('/login' + redirect)
     }
   }
 

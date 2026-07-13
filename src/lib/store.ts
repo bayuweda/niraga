@@ -14,7 +14,7 @@ interface AuthState {
   initialized: boolean
   initialize: () => Promise<void>
   signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string, redirect?: string) => Promise<{ error: any }>
   signInWithGoogle: (redirect?: string) => Promise<void>
   signOut: () => Promise<void>
 }
@@ -84,16 +84,21 @@ export const useAuth = create<AuthState>((set) => ({
     return { error }
   },
 
-  signUp: async (email, password) => {
+  signUp: async (email, password, redirect?: string) => {
     set({ loading: true })
     const supabase = getSupabaseClient()
     if (!supabase) {
       set({ loading: false })
       return { error: new Error('Supabase belum dikonfigurasi. Cek .env.local') }
     }
+    const origin = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || 'https://niraga.online')
+    const redirectTo = redirect
+      ? `${origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`
+      : undefined
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: redirectTo ? { emailRedirectTo: redirectTo } : undefined,
     })
     set({ loading: false })
     return { error }
@@ -127,6 +132,8 @@ export const useAuth = create<AuthState>((set) => ({
     if (supabase) {
       await supabase.auth.signOut()
     }
+    sessionStorage.removeItem('niraga_wizard_store')
+    sessionStorage.removeItem('niraga_wizard_products')
     set({ user: null })
   },
 }))

@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/lib/store'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getStoreByUserId } from '@/lib/db'
 import type { Store } from '@/lib/types'
@@ -15,6 +16,7 @@ const menuItems = [
 ]
 
 export default function DashboardSidebar({ currentPage }: { currentPage: string }) {
+  const router = useRouter()
   const { user, initialized, signOut } = useAuth()
   const [store, setStore] = useState<Store | null>(null)
 
@@ -66,7 +68,7 @@ export default function DashboardSidebar({ currentPage }: { currentPage: string 
       </div>
 
       <div className="mt-auto pt-4 border-t border-white/8">
-        <button onClick={signOut}
+        <button onClick={async () => { await signOut(); router.push('/login') }}
           className="flex items-center gap-2.5 w-full text-left px-2.5 py-2.5 rounded-[10px] text-xs font-medium text-red-400/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-150">
           <Icon.X size={16} />
           <span>Keluar</span>

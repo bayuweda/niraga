@@ -28,7 +28,8 @@ export default function SettingsPage() {
 
     async function load() {
       if (!user) return
-      const { data } = await getStoreByUserId(user.id)
+      const { data, error: storeErr } = await getStoreByUserId(user.id)
+      if (storeErr) toast.error('Gagal memuat data toko')
       if (data) {
         setStore(data)
         setForm({ name: data.name, description: data.description || '', wa: data.whatsapp || '', shippingInfo: data.shipping_info || '', paymentInfo: data.payment_info || '', bannerBase64: data.banner_url || '', qrisBase64: data.qris_url || '', themeColor: data.theme_color })
@@ -154,9 +155,17 @@ export default function SettingsPage() {
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Nomor WhatsApp</label>
-                <input value={form.wa} onChange={e => setForm({ ...form, wa: e.target.value })}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
-                  placeholder="08123456789" />
+                <div className="flex items-stretch">
+                  <div className="flex items-center px-3 bg-gray-100 border border-r-0 border-gray-200 rounded-l-xl text-sm font-bold text-gray-600 select-none">
+                    +62
+                  </div>
+                  <input value={form.wa.replace(/^\+62/, '')} onChange={e => {
+                    const raw = e.target.value.replace(/[^0-9]/g, '')
+                    setForm({ ...form, wa: raw ? `+62${raw}` : '' })
+                  }}
+                    className="flex-1 min-w-0 px-3 py-2.5 border border-gray-200 rounded-r-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+                    placeholder="8123456789" />
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1">Info Pengiriman</label>
@@ -216,7 +225,7 @@ export default function SettingsPage() {
                 </span>
               </div>
             </div>
-            <button onClick={signOut}
+            <button onClick={async () => { await signOut(); router.push('/login') }}
               className="mt-4 w-full py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm hover:bg-red-100 transition-all">
               Keluar
             </button>

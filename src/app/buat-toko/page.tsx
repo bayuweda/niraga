@@ -58,6 +58,15 @@ export default function BuatTokoPage() {
     })()
   }, [])
 
+  useEffect(() => {
+    if (!initialized || !user || autoSaveAttempted.current) return
+    const savedStore = sessionStorage.getItem('niraga_wizard_store')
+    if (savedStore) {
+      autoSaveAttempted.current = true
+      setTimeout(handleCreateStore, 300)
+    }
+  }, [user, initialized])
+
   const saveWizardData = () => {
     sessionStorage.setItem('niraga_wizard_store', JSON.stringify(store))
     sessionStorage.setItem('niraga_wizard_products', JSON.stringify(products))
@@ -120,7 +129,7 @@ export default function BuatTokoPage() {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > 2 * 1024 * 1024) {
-      alert('Ukuran maksimal 2MB')
+      toast.error('Ukuran maksimal 2MB')
       return
     }
     if (!file.type.startsWith('image/')) {
@@ -138,6 +147,13 @@ export default function BuatTokoPage() {
   const storeUrl = typeof window !== 'undefined' ? `${window.location.origin}/toko/${slug}` : `/toko/${slug}`
 
   const handleCreateStore = async () => {
+    // Read fresh data from sessionStorage to avoid stale closure after OAuth redirect
+    const savedStore = sessionStorage.getItem('niraga_wizard_store')
+    const savedProducts = sessionStorage.getItem('niraga_wizard_products')
+    const wizardStore = savedStore ? JSON.parse(savedStore) : store
+    const wizardProducts = savedProducts ? JSON.parse(savedProducts) : products
+    const wizardSlug = wizardStore.username || 'toko'
+
     if (!initialized) {
       await initialize()
     }
@@ -153,22 +169,27 @@ export default function BuatTokoPage() {
     try {
       const { data: newStore, error } = await createStore({
         user_id: state.user.id,
-        name: store.name,
-        slug,
-        whatsapp: store.wa || undefined,
-        description: store.desc || undefined,
-        shipping_info: store.shippingInfo || undefined,
-        theme_color: store.themeColor,
+        name: wizardStore.name,
+        slug: wizardSlug,
+        whatsapp: wizardStore.wa || undefined,
+        description: wizardStore.desc || undefined,
+        shipping_info: wizardStore.shippingInfo || undefined,
+        theme_color: wizardStore.themeColor,
       })
 
       if (error || !newStore) {
         console.error('Gagal simpan toko:', error, newStore)
-        toast.error(error?.message || 'Gagal menyimpan toko')
+        if (error?.message?.includes('duplicate key') || error?.message?.includes('stores_slug_key')) {
+          toast.error('Link toko sudah dipakai, coba ganti username lain')
+        } else {
+          toast.error(error?.message || 'Gagal menyimpan toko')
+        }
         setSaving(false)
         return
       }
 
-      for (const p of products) {
+      let hasProductError = false
+      for (const p of wizardProducts) {
         const { error: prodErr } = await createProduct({
           store_id: newStore.id,
           name: p.name,
@@ -178,8 +199,12 @@ export default function BuatTokoPage() {
           image_url: p.imageBase64 || undefined,
           images: p.imageBase64 ? [p.imageBase64] : [],
         })
-        if (prodErr) console.error('Gagal simpan produk:', prodErr)
+        if (prodErr) {
+          console.error('Gagal simpan produk:', prodErr)
+          hasProductError = true
+        }
       }
+      if (hasProductError) toast.error('Beberapa produk gagal disimpan')
 
       sessionStorage.removeItem('niraga_wizard_store')
       sessionStorage.removeItem('niraga_wizard_products')
@@ -292,14 +317,23 @@ export default function BuatTokoPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">Nomor WhatsApp *</label>
-                <input
-                  type="text"
-                  value={store.wa}
-                  onChange={e => setStore({ ...store, wa: e.target.value.replace(/[^0-9+]/g, '') })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
-                  placeholder="cth: +628123456789"
-                />
-                <div className="text-[11px] text-gray-500 mt-1.5">Gunakan format +62, jangan diawali 0. Contoh: <span className="font-semibold">+628123456789</span></div>
+                <div className="flex items-stretch">
+                  <div className="flex items-center px-3.5 bg-gray-100 border border-r-0 border-gray-200 rounded-l-xl text-sm font-bold text-gray-600 select-none">
+                    +62
+                  </div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={store.wa.replace(/^\+62/, '')}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/[^0-9]/g, '')
+                      setStore({ ...store, wa: raw ? `+62${raw}` : '' })
+                    }}
+                    className="flex-1 min-w-0 px-4 py-3 border border-gray-200 rounded-r-xl text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-cream transition-all"
+                    placeholder="8123456789"
+                  />
+                </div>
+                <div className="text-[11px] text-gray-500 mt-1.5">Cukup isi nomor setelah <span className="font-semibold">+62</span>. Contoh: <span className="font-semibold">8123456789</span></div>
               </div>
 
               <div>

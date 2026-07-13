@@ -12,7 +12,10 @@ const SITE_URL = 'https://niraga.online'
 export const metadata: Metadata = {
   title: { default: 'Niraga - Katalog WA untuk Toko Online', template: '%s | Niraga' },
   description: 'Buat katalog WA toko online kamu dalam 2 menit. Gratis selamanya.',
-  icons: { icon: '/favicon.svg' },
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     type: 'website',
     siteName: 'Niraga',
