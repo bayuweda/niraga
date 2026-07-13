@@ -181,6 +181,19 @@ as $$
   select not exists (select 1 from public.stores where slug = uname);
 $$;
 
+-- Ensure profile exists (bypass RLS dengan security definer)
+create or replace function public.ensure_profile_exists(uid uuid, email text)
+returns void
+language plpgsql
+security definer
+as $$
+begin
+  insert into public.profiles (id, email)
+  values (uid, email)
+  on conflict (id) do update set email = excluded.email;
+end;
+$$;
+
 -- Increment store view counter
 create or replace function public.increment_store_view(sid uuid)
 returns integer

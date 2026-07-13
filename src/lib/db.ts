@@ -7,7 +7,7 @@ type Result<T> = { data: T; error: null } | { data: null; error: PostgrestError 
 
 export async function ensureProfile(userId: string, email?: string) {
   const supabase = getSupabaseClient()
-  return supabase.from('profiles').upsert({ id: userId, email }, { onConflict: 'id' })
+  return supabase.rpc('ensure_profile_exists', { uid: userId, email })
 }
 
 // --- STORES ---
